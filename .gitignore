@@ -1,0 +1,24 @@
+# Node.js
+node_modules/
+.pnpm-store/
+package-lock.json
+yarn.lock
+pnpm-lock.yaml
+
+# Build artifacts
+dist/
+build/
+coverage/
+
+# Environment variables
+.env
+.env.local
+
+# IDE and OS files
+.idea/
+.vscode/
+.DS_Store
+Thumbs.db
+
+# Turborepo-specific ignores (if applicable)
+.turbo/
