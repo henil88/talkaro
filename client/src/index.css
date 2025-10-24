@@ -1,13 +1,7 @@
+@import url("https://fonts.googleapis.com/css2?family=Bitcount+Grid+Single:wght@100..900&family=Roboto:ital,wght@0,100..900;1,100..900&display=swap");
 @import "tailwindcss";
 
-* {
-  margin: 0;
-  padding: 0;
-  box-sizing: border-box;
-}
-
-html,
-body {
-  width: 100%;
-  height: 100%;
+@theme {
+  --font-bitcount: "Bitcount Grid Single", sans-serif;
+  --font-roboto: "Roboto", sans-serif;
 }
