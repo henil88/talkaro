@@ -13,7 +13,7 @@ const Button = ({ children, className, onClick }: Props) => {
       type="button"
       onClick={onClick}
       className={
-        "rounded-sm bg-blue-600 px-4 py-2 cursor-pointer flex justify-center items-center gap-1.5 hover:gap-2 ease-in select-none duration-100 " +
+        " hover:gap-2 hover:bg-blue-700 rounded-sm bg-blue-900 px-4 py-2 cursor-pointer flex justify-center items-center gap-1.5 ease-in select-none duration-100 " +
         className
       }
     >
