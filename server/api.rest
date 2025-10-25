@@ -1,0 +1,16 @@
+
+GET  http://localhost:3000 HTTP/1.1
+Content-Type: : application/json
+
+{
+
+}
+
+###
+POST http://localhost:3000/api/send-otp HTTP/1.1
+Content-Type:  application/json
+
+
+{
+    "phone":"+919409278978"
+}
