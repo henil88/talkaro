@@ -16,12 +16,12 @@ export default function IndiaFlagIcon({
   const height = typeof size === "number" ? size : parseInt(size, 10) || 24;
   const width = Math.round((3 / 2) * height);
 
-  // Chakra (navy wheel) parameters
+  // Chukar (navy wheel) parameters
   const cx = 150;
   const cy = 100;
-  const chakraRadius = 30; // radius of the circle
+  const chukarRadius = 30; // radius of the circle
 //   const spokeInner = 0; // inner offset from center for spokes (0 = from center)
-  const spokeOuter = chakraRadius - 2; // length of spoke will go to just inside the circle's stroke
+  const spokeOuter = chukarRadius - 2; // length of spoke will go to just inside the circle's stroke
   const spokeCount = 24;
 
   return (
@@ -51,7 +51,7 @@ export default function IndiaFlagIcon({
       <circle
         cx={cx}
         cy={cy}
-        r={chakraRadius}
+        r={chukarRadius}
         fill="none"
         stroke="#000080"
         strokeWidth="6"
@@ -83,7 +83,7 @@ export default function IndiaFlagIcon({
       <circle
         cx={cx}
         cy={cy}
-        r={chakraRadius - 8}
+        r={chukarRadius - 8}
         fill="none"
         stroke="#000080"
         strokeWidth="1"
