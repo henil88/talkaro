@@ -1,6 +1,7 @@
 import React, { useState, useCallback } from "react";
 import RegisterOutlet from "../../../layouts/RegisterOutlet";
 import EmailPhone from "./EmailPhone";
+import Verification from "./Verification";
 
 interface StageControlProps {
   stage: number;
@@ -10,9 +11,8 @@ interface StageControlProps {
 
 const StageComponents: { [key: number]: React.FC<StageControlProps> } = {
   0: EmailPhone,
-  // Add more stages here as needed:
-  // 1: AccountDetails,
-  // 2: Verification,
+  1: Verification,
+  // 2: AccountDetails,
 };
 
 const MAX_STAGE = Object.keys(StageComponents).length - 1;
@@ -31,7 +31,11 @@ const Register: React.FC = () => {
   const CurrentStageComponent = StageComponents[stage];
 
   if (!CurrentStageComponent) {
-    return <RegisterOutlet><div>Error: Invalid Stage</div></RegisterOutlet>;
+    return (
+      <RegisterOutlet>
+        <div>Error: Invalid Stage</div>
+      </RegisterOutlet>
+    );
   }
 
   return (
