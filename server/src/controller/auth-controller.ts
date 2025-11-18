@@ -3,6 +3,7 @@ import otpService from "../services/otp-service";
 import hashService from "../services/hash-service";
 
 class AuthController {
+  //send-otp-function
   async sendOtp(req: Request, res: Response) {
     const { phone } = req.body;
 
