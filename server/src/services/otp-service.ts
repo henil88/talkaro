@@ -1,5 +1,6 @@
 import crypto from "crypto";
 import twilio from "twilio";
+import hashService from "./hash-service";
 
 const accoundSid = process.env.ACCOUNT_SID;
 const smsAuth = process.env.AUTH_TOKEN;
@@ -25,7 +26,12 @@ class Otpservice {
   }
 
   //veryfy sended otp
-  verifyOtp() {}
+  verifyOtp(hashed:string,data:string) {
+
+    const computedHas = hashService.hashOtp(data)
+    return hashed === computedHas
+
+  }
 }
 
 export default new Otpservice();
