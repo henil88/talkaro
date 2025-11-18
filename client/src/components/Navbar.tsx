@@ -1,11 +1,17 @@
+import { useNavigate } from "react-router-dom";
+
 const Navbar = () => {
+  const navigate = useNavigate();
+
   return (
     <div className="w-full flex justify-between items-center px-12 py-4">
-      <div className="Logo">
+      <button
+        onClick={() => navigate("/")}
+        className="Logo cursor-pointer flex items-center gap-2"
+      >
         <div className="Icon"></div>
         <span className="text-4xl font-bitcount">Talkaro</span>
-      </div>
-      <span className="w-0"></span>
+      </button>
     </div>
   );
 };

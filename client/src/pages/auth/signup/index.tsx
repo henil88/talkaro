@@ -10,6 +10,9 @@ interface StageControlProps {
 
 const StageComponents: { [key: number]: React.FC<StageControlProps> } = {
   0: EmailPhone,
+  // Add more stages here as needed:
+  // 1: AccountDetails,
+  // 2: Verification,
 };
 
 const MAX_STAGE = Object.keys(StageComponents).length - 1;
