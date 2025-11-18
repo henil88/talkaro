@@ -10,10 +10,12 @@ const client = twilio(accoundSid, smsAuth, {
 });
 
 class Otpservice {
+  //ganrate-otp
   async genrateOtp() {
     return crypto.randomInt(1000, 9999);
   }
 
+  //send otp by sms
   async sendBySms(phone: string, otp: number) {
     return await client.messages.create({
       to: phone,
@@ -22,6 +24,7 @@ class Otpservice {
     });
   }
 
+  //veryfy sended otp
   verifyOtp() {}
 }
 
