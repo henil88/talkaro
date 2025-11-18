@@ -2,6 +2,7 @@ import React, {
   useRef,
   useState,
   useEffect,
+  useCallback,
   type ChangeEvent,
   type KeyboardEvent,
   type ClipboardEvent,
@@ -22,7 +23,7 @@ const OtpInput: React.FC<OtpInputProps> = ({ length = 4, onChange }) => {
     onChange?.(newOtp.join(""));
   };
 
-  const getFirstEmptyIndex = () => otp.findIndex((d) => d === "");
+  const getFirstEmptyIndex = useCallback(() => otp.findIndex((d) => d === ""), [otp]);
 
   /** Auto-fix focus every time OTP changes */
   useEffect(() => {
@@ -30,7 +31,7 @@ const OtpInput: React.FC<OtpInputProps> = ({ length = 4, onChange }) => {
     if (firstEmpty !== -1) {
       inputsRef.current[firstEmpty]?.focus();
     }
-  }, [otp]);
+  }, [getFirstEmptyIndex, otp]);
 
   const handleChange = (e: ChangeEvent<HTMLInputElement>, index: number) => {
     const value = e.target.value.replace(/\D/g, "");
