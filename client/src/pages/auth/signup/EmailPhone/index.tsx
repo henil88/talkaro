@@ -6,9 +6,14 @@ import Email from "./email"; // Assuming this is a React component
 import OptionButton from "./OptionButton";
 
 // 📝 Define a union type for the possible state values
-type OptionType = 'phone' | 'email';
+type OptionType = "phone" | "email";
 
-const EmailPhone: React.FC = () => {
+type Props = {
+  goToPreviousStage: () => void;
+  goToNextStage: () => void;
+};
+
+const EmailPhone: React.FC<Props> = ({ goToNextStage }) => {
   // Use the defined type for useState
   const [option, setOption] = useState<OptionType>("phone");
 
@@ -17,12 +22,15 @@ const EmailPhone: React.FC = () => {
     setOption(newOption);
   }, []);
 
-  const baseButtonClasses: string = "p-3 flex items-center justify-center rounded-2xl duration-200 cursor-pointer";
-  
+  const baseButtonClasses: string =
+    "p-3 flex items-center justify-center rounded-2xl duration-200 cursor-pointer";
+
   const buttonBGClasses: { active: string; inactive: string } = {
     active: "bg-blue-500",
     inactive: "bg-neutral-900",
   };
+
+  const CurrentComponent = option === "phone" ? Phone : Email;
 
   return (
     <>
@@ -38,7 +46,7 @@ const EmailPhone: React.FC = () => {
               bgClasses={buttonBGClasses}
             >
               {/* Assuming PhoneIcon accepts 'size' as a number prop */}
-              <PhoneIcon size={38} /> 
+              <PhoneIcon size={38} />
             </OptionButton>
 
             {/* Email Button */}
@@ -58,7 +66,7 @@ const EmailPhone: React.FC = () => {
 
       <div className="mt-4">
         {/* Conditional render based on the state value */}
-        {option === "phone" ? <Phone /> : <Email />}
+        <CurrentComponent goToNextStage={goToNextStage} />
       </div>
     </>
   );
