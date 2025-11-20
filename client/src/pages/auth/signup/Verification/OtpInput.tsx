@@ -16,6 +16,8 @@ interface OtpInputProps {
 
 const OtpInput: React.FC<OtpInputProps> = ({ length = 4, onChange }) => {
   const [otp, setOtp] = useState<string[]>(Array(length).fill(""));
+  const [isUserEditing, setIsUserEditing] = useState(false);
+
   const inputsRef = useRef<(HTMLInputElement | null)[]>([]);
 
   const updateOtp = (newOtp: string[]) => {
@@ -23,15 +25,20 @@ const OtpInput: React.FC<OtpInputProps> = ({ length = 4, onChange }) => {
     onChange?.(newOtp.join(""));
   };
 
-  const getFirstEmptyIndex = useCallback(() => otp.findIndex((d) => d === ""), [otp]);
+  const getFirstEmptyIndex = useCallback(
+    () => otp.findIndex((d) => d === ""),
+    [otp]
+  );
 
-  /** Auto-fix focus every time OTP changes */
+  /** Auto focus only when user is not manually editing */
   useEffect(() => {
+    if (isUserEditing) return;
+
     const firstEmpty = getFirstEmptyIndex();
     if (firstEmpty !== -1) {
       inputsRef.current[firstEmpty]?.focus();
     }
-  }, [getFirstEmptyIndex, otp]);
+  }, [otp, getFirstEmptyIndex, isUserEditing]);
 
   const handleChange = (e: ChangeEvent<HTMLInputElement>, index: number) => {
     const value = e.target.value.replace(/\D/g, "");
@@ -39,11 +46,15 @@ const OtpInput: React.FC<OtpInputProps> = ({ length = 4, onChange }) => {
     const newOtp = [...otp];
     newOtp[index] = value ? value[0] : "";
     updateOtp(newOtp);
+
+    // User typed → stop editing mode
+    setIsUserEditing(false);
   };
 
   const handleKeyDown = (e: KeyboardEvent<HTMLInputElement>, index: number) => {
     if (e.key === "Backspace" && otp[index] === "" && index > 0) {
       inputsRef.current[index - 1]?.focus();
+      setIsUserEditing(true);
     }
   };
 
@@ -51,19 +62,24 @@ const OtpInput: React.FC<OtpInputProps> = ({ length = 4, onChange }) => {
     const pasteData = e.clipboardData.getData("text").replace(/\D/g, "");
 
     if (pasteData.length === length) {
-      const newOtp = pasteData.split("").slice(0, length);
-      updateOtp(newOtp);
+      updateOtp(pasteData.split("").slice(0, length));
+      setIsUserEditing(false);
     }
   };
 
-  /** Prevent focusing on boxes after an empty one */
+  /** Allow editing previous boxes without focus being stolen */
   const handleFocus = (e: FocusEvent<HTMLInputElement>, index: number) => {
     const firstEmpty = getFirstEmptyIndex();
 
+    // If user tries to focus after the first empty box → redirect focus
     if (index > firstEmpty && firstEmpty !== -1) {
       e.preventDefault();
       inputsRef.current[firstEmpty]?.focus();
+      return;
     }
+
+    // But if user focuses a previous filled box, mark editing mode
+    setIsUserEditing(true);
   };
 
   return (
