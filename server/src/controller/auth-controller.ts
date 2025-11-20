@@ -48,12 +48,12 @@ class AuthController {
     }
 
     const [hashedOtp, expireStr] = hash.split(".");
-    console.log(hashedOtp)
+    // console.log(hashedOtp)
 
     const expire: number = Number(expireStr);
 
     if (Date.now() > expire) {
-      res.status(400).json({
+      return res.status(400).json({
         message: "otp expire",
       });
     }
