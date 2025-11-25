@@ -1,6 +1,7 @@
 import { Request, Response } from "express";
 import otpService from "../services/otp-service";
 import hashService from "../services/hash-service";
+import userService from "../services/user-service";
 
 class AuthController {
   //send-otp-function
@@ -38,7 +39,7 @@ class AuthController {
     }
   }
 
-  verifyOtp(req: Request, res: Response) {
+  async verifyOtp(req: Request, res: Response) {
     const { otp, hash, phone } = req.body;
 
     if (!otp || !hash || !phone) {
@@ -58,19 +59,35 @@ class AuthController {
       });
     }
 
-    const data = `${phone}.${otp}.${expire}`
-    const isValid = otpService.verifyOtp(hashedOtp,data);
+    const data = `${phone}.${otp}.${expire}`;
+    const isValid = otpService.verifyOtp(hashedOtp, data);
 
-    if(!isValid){
+    if (!isValid) {
       return res.status(400).json({
-        message:"otp is invalid"
-      })
+        message: "otp is invalid",
+      });
     }
+
+    let user;
+    let accesToken;
+    let refreshToken;
+
+    try {
+      user = await userService.findUser({ phone });
+      if (!user) {
+        user = await userService.createUser({ phone });
+      }
+    } catch (err) {
+      console.log(err);
+      res.status(500).json({
+        message: "Db Error",
+      });
+    }
+
     
-    res.status(200).json({
-      message:"otp verify succes"
-    })
   }
 }
 
 export default new AuthController();
+
+
