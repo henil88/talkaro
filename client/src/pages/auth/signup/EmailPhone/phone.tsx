@@ -24,7 +24,7 @@ const Phone: React.FC<Props> = ({ goToNextStage }) => {
               <IndiaFlagIcon size={24.5} className="rounded-md" />
               <input
                 id="flag"
-                type="number"
+                type="tel"
                 placeholder="+91-98233-24223"
                 className="text-lg/loose duration-200 outline-0 pl-3.5 py-2 w-full h-full [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none"
               />
