@@ -2,9 +2,9 @@ import { createSlice } from "@reduxjs/toolkit";
 import { getUser } from "./actions";
 
 interface State {
+  loading: boolean;
   user: unknown | null;
   error: string | null;
-  loading: boolean;
 }
 
 const initialState: State = {

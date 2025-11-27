@@ -3,14 +3,12 @@ import { sendOTP, verifyOTP } from "./actions";
 
 interface State {
   token: string | null;
-  user: unknown | null;
   loading: boolean;
   error: string | null;
 }
 
 const initialState: State = {
   token: null,
-  user: null,
   loading: false,
   error: null,
 };
@@ -21,7 +19,6 @@ const authSlice = createSlice({
   reducers: {
     logout: (state) => {
       state.token = null;
-      state.user = null;
       state.error = null;
     },
   },
@@ -47,7 +44,6 @@ const authSlice = createSlice({
       .addCase(verifyOTP.fulfilled, (state, action) => {
         state.loading = false;
         state.token = action.payload.token;
-        state.user = action.payload.user;
       })
       .addCase(verifyOTP.rejected, (state, action) => {
         state.loading = false;

@@ -18,10 +18,6 @@ const AccountDetails: React.FC<Props> = ({ goToNextStage }) => {
     fullName: "",
     profile: null,
   });
-
-  useEffect(() => {
-    console.log(userDetails);
-  }, [userDetails]);
   return (
     <div className="w-xl bg-zinc-900 py-22 rounded-2xl px-8 flex flex-col gap-10">
       <div className="flex flex-col gap-10.5">

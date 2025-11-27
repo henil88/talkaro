@@ -23,6 +23,7 @@ export const sendOTP = createAsyncThunk(
     try {
       const response = await api.post("/api/send-otp", { identifier });
       console.log(response.data.message);
+      return Promise.resolve(response.data);
     } catch (err) {
       const errMsg =
         ((err as RejectedError)?.response?.data as RejectedResponse)?.message ||
@@ -37,7 +38,7 @@ type VerifyParam = {
   otp: string;
 };
 
-type FulfilledResponse = { token: string; user: unknown };
+type FulfilledResponse = { token: string };
 
 export const verifyOTP = createAsyncThunk(
   "auth/verifyOTP",

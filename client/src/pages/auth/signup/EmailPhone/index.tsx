@@ -16,11 +16,18 @@ type Props = {
 const EmailPhone: React.FC<Props> = ({ goToNextStage }) => {
   // Use the defined type for useState
   const [option, setOption] = useState<OptionType>("phone");
+  const [input, setInput] = useState<string>("");
 
   // Use the defined type in useCallback
   const handleOptionChange = useCallback((newOption: OptionType) => {
     setOption(newOption);
+    setInput("");
   }, []);
+
+  const submit = useCallback(() => {
+    console.log(input);
+    goToNextStage();
+  }, [goToNextStage, input]);
 
   const baseButtonClasses: string =
     "p-3 flex items-center justify-center rounded-2xl duration-200 cursor-pointer";
@@ -66,7 +73,12 @@ const EmailPhone: React.FC<Props> = ({ goToNextStage }) => {
 
       <div className="mt-4">
         {/* Conditional render based on the state value */}
-        <CurrentComponent goToNextStage={goToNextStage} />
+        <CurrentComponent
+          goToNextStage={goToNextStage}
+          input={input}
+          setInput={setInput}
+          submit={submit}
+        />
       </div>
     </>
   );

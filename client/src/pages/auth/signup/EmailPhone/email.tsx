@@ -2,11 +2,21 @@ import Button from "../../../../components/Button";
 
 type Props = {
   goToNextStage: () => void;
+  input: string;
+  setInput: React.Dispatch<React.SetStateAction<string>>;
+  submit: (input: string) => void;
 };
 
-const Email: React.FC<Props> = ({ goToNextStage }) => {
+const Email: React.FC<Props> = ({ input, setInput, submit }) => {
+  const onSubmit = (event: React.FormEvent<HTMLFormElement>) => {
+    event.preventDefault();
+    submit(input.trim());
+  };
   return (
-    <div className="w-xl bg-zinc-900 py-22 rounded-2xl px-8 flex flex-col gap-10">
+    <form
+      onSubmit={onSubmit}
+      className="w-xl bg-zinc-900 py-22 rounded-2xl px-8 flex flex-col gap-8"
+    >
       <div className="flex flex-col gap-10.5">
         <h4
           id="phone"
@@ -23,6 +33,8 @@ const Email: React.FC<Props> = ({ goToNextStage }) => {
               <input
                 id="flag"
                 type="email"
+                value={input}
+                onChange={(e) => setInput(e.target.value)}
                 placeholder="talkaro@talkaro.com"
                 className="text-lg/loose duration-200 outline-0 py-2 w-full h-full [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none"
               />
@@ -31,7 +43,7 @@ const Email: React.FC<Props> = ({ goToNextStage }) => {
         </div>
       </div>
       <div className="w-full flex justify-center items-center flex-col gap-5">
-        <Button className="w-[11.12rem]" onClick={goToNextStage}>
+        <Button type="submit" className="w-[11.12rem]">
           Next
         </Button>
         <p className="text-[#C4C5C5] text-sm w-75 text-center">
@@ -46,7 +58,7 @@ const Email: React.FC<Props> = ({ goToNextStage }) => {
           . Thanks!
         </p>
       </div>
-    </div>
+    </form>
   );
 };
 
