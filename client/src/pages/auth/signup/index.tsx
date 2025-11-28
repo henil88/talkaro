@@ -1,7 +1,7 @@
 import React, { useState, useCallback } from "react";
 import RegisterOutlet from "../../../layouts/RegisterOutlet";
 import EmailPhone from "../../../components/AuthInput";
-import Verification from "./Verification";
+import Verification from "../../../components/OTPVerify";
 import AccountDetails from "./AccountDetails";
 
 interface StageControlProps {
