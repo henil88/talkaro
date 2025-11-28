@@ -1,16 +1,14 @@
 import { createSlice } from "@reduxjs/toolkit";
-import { sendOTP, verifyOTP } from "./actions";
+import { verifyOTP } from "./actions";
 
 interface State {
   token: string | null;
-  loading: boolean;
-  error: string | null;
+  isAuthorized: boolean;
 }
 
 const initialState: State = {
   token: null,
-  loading: false,
-  error: null,
+  isAuthorized: false,
 };
 
 const authSlice = createSlice({
@@ -19,35 +17,17 @@ const authSlice = createSlice({
   reducers: {
     logout: (state) => {
       state.token = null;
-      state.error = null;
+      state.isAuthorized = false;
     },
   },
   extraReducers: (builder) => {
     builder
-      .addCase(sendOTP.pending, (state) => {
-        state.loading = true;
-        state.error = null;
-      })
-      .addCase(sendOTP.fulfilled, (state) => {
-        state.loading = false;
-      })
-      .addCase(sendOTP.rejected, (state, action) => {
-        state.loading = false;
-        state.error = action.payload as string;
-      });
-
-    builder
-      .addCase(verifyOTP.pending, (state) => {
-        state.loading = true;
-        state.error = null;
-      })
       .addCase(verifyOTP.fulfilled, (state, action) => {
-        state.loading = false;
+        state.isAuthorized = action.payload.isAuthorized;
         state.token = action.payload.token;
       })
-      .addCase(verifyOTP.rejected, (state, action) => {
-        state.loading = false;
-        state.error = action.payload as string;
+      .addCase(verifyOTP.rejected, (state) => {
+        state.isAuthorized = false;
       });
   },
 });

@@ -15,30 +15,12 @@ type Identifier =
 type RejectedError = unknown & AxiosError;
 type RejectedResponse = { message: string };
 
-export const sendOTP = createAsyncThunk(
-  "auth/sendOTP",
-  async ({ email, phone }: Identifier, { rejectWithValue }) => {
-    const identifier = email || phone;
-    if (!identifier) throw new Error("Neither email nor phone was provided.");
-    try {
-      const response = await api.post("/api/send-otp", { identifier });
-      console.log(response.data.message);
-      return Promise.resolve(response.data);
-    } catch (err) {
-      const errMsg =
-        ((err as RejectedError)?.response?.data as RejectedResponse)?.message ||
-        "Error sending OTP";
-      return rejectWithValue(errMsg);
-    }
-  }
-);
-
 type VerifyParam = {
   identifier: Identifier;
   otp: string;
 };
 
-type FulfilledResponse = { token: string };
+type FulfilledResponse = { token: string, isAuthorized: boolean };
 
 export const verifyOTP = createAsyncThunk(
   "auth/verifyOTP",

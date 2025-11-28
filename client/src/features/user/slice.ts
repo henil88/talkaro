@@ -2,15 +2,13 @@ import { createSlice } from "@reduxjs/toolkit";
 import { getUser } from "./actions";
 
 interface State {
-  loading: boolean;
+  isActivated: boolean;
   user: unknown | null;
-  error: string | null;
 }
 
 const initialState: State = {
   user: null,
-  error: null,
-  loading: false,
+  isActivated: false,
 };
 
 const userSlice = createSlice({
@@ -26,16 +24,13 @@ const userSlice = createSlice({
   },
   extraReducers: (builder) => {
     builder
-      .addCase(getUser.pending, (state) => {
-        state.loading = true;
-      })
       .addCase(getUser.fulfilled, (state, action) => {
-        state.user = action.payload;
-        state.loading = false;
+        state.user = action.payload.data;
+        state.isActivated = action.payload.isActivated;
       })
-      .addCase(getUser.rejected, (state, action) => {
-        state.error = action.payload as string;
-        state.loading = false;
+      .addCase(getUser.rejected, (state) => {
+        state.user = null;
+        state.isActivated = false;
       });
   },
 });
