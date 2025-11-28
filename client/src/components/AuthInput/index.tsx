@@ -3,12 +3,24 @@ import PhoneIcon from "../icons/Phone";
 import EmailIcon from "../icons/Email";
 import OptionButton from "./OptionButton";
 import { GeneratedForm } from "./form/GeneratedForm";
-import { useNavigate } from "react-router";
 
-const useEmailPhone = () => {
+type Props = {
+  forward: () => void;
+}
+
+type CustomHook<T, P> = (param: T) => P;
+
+interface HookResults {
+  option: "phone" | "email";
+  input: string;
+  setInput: React.Dispatch<React.SetStateAction<string>>;
+  submit: () => void;
+  selectOption: (next: "phone" | "email") => void;
+}
+
+const useEmailPhone: CustomHook<Props, HookResults> = ({ forward }) => {
   const [option, setOption] = useState<"phone" | "email">("phone");
   const [input, setInput] = useState("");
-  const navigate = useNavigate();
 
   const selectOption = (next: "phone" | "email") => {
     setOption(next);
@@ -17,7 +29,7 @@ const useEmailPhone = () => {
 
   const submit = () => {
     console.log(input);
-    navigate("/auth/verify");
+    forward();
   };
 
   return {
@@ -37,8 +49,9 @@ const buttonBGClasses = {
   inactive: "bg-neutral-900",
 };
 
-const EmailPhone: React.FC = () => {
-  const { option, input, setInput, submit, selectOption } = useEmailPhone();
+
+const EmailPhone: React.FC<Props> = (props) => {
+  const { option, input, setInput, submit, selectOption } = useEmailPhone(props);
 
   return (
     <div>

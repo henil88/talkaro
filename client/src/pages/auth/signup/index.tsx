@@ -1,8 +1,7 @@
 import React, { useState, useCallback } from "react";
 import RegisterOutlet from "../../../layouts/RegisterOutlet";
-import EmailPhone from "../../../components/AuthInput";
 import Verification from "../../../components/OTPVerify";
-import AccountDetails from "./AccountDetails";
+import AccountDetails from "../../../components/ProfileSetup";
 
 interface StageControlProps {
   stage: number;
@@ -11,7 +10,6 @@ interface StageControlProps {
 }
 
 const StageComponents: { [key: number]: React.FC<StageControlProps> } = {
-  0: EmailPhone,
   1: Verification,
   2: AccountDetails,
 };
