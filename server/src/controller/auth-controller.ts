@@ -2,6 +2,7 @@ import { Request, Response } from "express";
 import otpService from "../services/otp-service";
 import hashService from "../services/hash-service";
 import userService from "../services/user-service";
+import tokenService from "../services/token-service";
 
 class AuthController {
   //send-otp-function
@@ -69,8 +70,6 @@ class AuthController {
     }
 
     let user;
-    let accesToken;
-    let refreshToken;
 
     try {
       user = await userService.findUser({ phone });
@@ -83,11 +82,17 @@ class AuthController {
         message: "Db Error",
       });
     }
+    const { accesToken, refreshToken } = tokenService.ganrateToken("str");
 
-    
+    res.cookie("refreshToken", refreshToken, {
+      maxAge: 1000 * 60 * 60 * 24 * 30,
+      httpOnly: true,
+    });
+
+    res.json({
+      accesToken,
+    });
   }
 }
 
 export default new AuthController();
-
-
