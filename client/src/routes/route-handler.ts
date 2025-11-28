@@ -2,6 +2,7 @@ import { createBrowserRouter } from "react-router";
 import Layout from "../layouts/Layout";
 import Home from "../pages/Home";
 import SignUp from "../pages/auth/signup";
+import AuthFlow from "../pages/auth/authFlow";
 
 const router = createBrowserRouter([
   {
@@ -11,6 +12,10 @@ const router = createBrowserRouter([
       {
         index: true,
         Component: Home,
+      },
+      {
+        path: "/auth",
+        Component: AuthFlow,
       },
       {
         path: "/signup",

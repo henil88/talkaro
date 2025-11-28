@@ -23,7 +23,7 @@ const Home = () => {
         </div>
 
         <div className="w-full">
-          <Button onClick={() => navigate("/signup")}>Get Your Username</Button>
+          <Button onClick={() => navigate("/auth")}>Get Your Username</Button>
         </div>
       </div>
     </div>

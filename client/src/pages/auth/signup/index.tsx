@@ -1,6 +1,6 @@
 import React, { useState, useCallback } from "react";
 import RegisterOutlet from "../../../layouts/RegisterOutlet";
-import EmailPhone from "./EmailPhone";
+import EmailPhone from "../../../components/AuthInput";
 import Verification from "./Verification";
 import AccountDetails from "./AccountDetails";
 
