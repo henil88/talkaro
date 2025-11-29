@@ -5,7 +5,7 @@ import { store } from "../../store";
 
 export async function getUser() {
   try {
-    const response = await api.get("/user");
+    const response = await api.get("/api/user");
     console.log("GET_USER", response.data);
     store.dispatch(
       setUser({

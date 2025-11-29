@@ -1,5 +1,4 @@
 import { createSlice } from "@reduxjs/toolkit";
-import { getUser } from "./actions";
 
 interface State {
   isActivated: boolean;
@@ -19,22 +18,14 @@ const userSlice = createSlice({
       state.user = action.payload.user;
       state.isActivated = action.payload.isActivated;
     },
+    setIsActivated: (state, action) => {
+      state.isActivated = action.payload.isActivated;
+    },
     logout: (state) => {
       state.user = null;
     },
   },
-  extraReducers: (builder) => {
-    builder
-      .addCase(getUser.fulfilled, (state, action) => {
-        state.user = action.payload.data;
-        state.isActivated = action.payload.isActivated;
-      })
-      .addCase(getUser.rejected, (state) => {
-        state.user = null;
-        state.isActivated = false;
-      });
-  },
 });
 
-export const { logout, setUser } = userSlice.actions;
+export const { logout, setUser,  } = userSlice.actions;
 export default userSlice.reducer;

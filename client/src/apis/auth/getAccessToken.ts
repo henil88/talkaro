@@ -5,7 +5,7 @@ import { store } from "../../store";
 
 export async function getAccessToken(api: AxiosInstance) {
   try {
-    const response = await api.get("/refresh");
+    const response = await api.get("/api/refresh");
     console.log("GET_ACCESS_TOKEN", response.data);
     store.dispatch(
       setToken({
