@@ -1,5 +1,5 @@
 import type { AxiosError } from "axios";
-import api from "../../lib/axios";
+import api from "../lib/axios";
 
 type Identifier =
   | {
