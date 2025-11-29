@@ -19,13 +19,13 @@ export const sendOTP = async ({ email, phone }: Identifier) => {
   const identifier = email || phone;
   if (!identifier) throw new Error("Neither email nor phone was provided.");
   try {
-    const response = await api.post("/api/send-otp", { identifier });
+    const response = await api.post("/api/send-otp", { email, phone });
     console.log(response.data.message);
-    return Promise.resolve(response.data);
+    return response.data;
   } catch (err) {
     const errMsg =
       ((err as RejectedError)?.response?.data as RejectedResponse)?.message ||
       "Error sending OTP";
-    return errMsg;
+    console.error(errMsg)
   }
 };
