@@ -16,7 +16,8 @@ const userSlice = createSlice({
   initialState,
   reducers: {
     setUser: (state, action) => {
-      state.user = action.payload;
+      state.user = action.payload.user;
+      state.isActivated = action.payload.isActivated;
     },
     logout: (state) => {
       state.user = null;
