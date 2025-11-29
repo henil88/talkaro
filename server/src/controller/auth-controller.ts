@@ -82,7 +82,14 @@ class AuthController {
         message: "Db Error",
       });
     }
-    const { accesToken, refreshToken } = tokenService.ganrateToken("str");
+
+    // if (!user) {
+    //   throw new Error("user not available");
+    // }
+    const { accesToken, refreshToken } = tokenService.ganrateToken({
+      _id: user!._id.toString(),
+      activated: false,
+    });
 
     res.cookie("refreshToken", refreshToken, {
       maxAge: 1000 * 60 * 60 * 24 * 30,
