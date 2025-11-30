@@ -1,29 +1,20 @@
-/* eslint-disable */
-// @ts-nocheck
+import type { AxiosError } from "axios";
 import api from "../lib/axios";
-function formatFormData<T extends Record<string, unknown>>(
-  payload: T
-): FormData {
-  const formData = new FormData();
-  Object.keys(payload).forEach((key) => {
-    const value = payload[key];
-    if (value instanceof File || value instanceof Blob) {
-      formData.append(key, value);
-    } else if (Array.isArray(value)) {
-      value.forEach((item) => {
-        formData.append(key, item);
-      });
-    } else if (value !== undefined && value !== null) {
-      formData.append(key, String(value));
-    }
-  });
-  return formData;
-}
 
 interface ProfileDetails {
   username: string;
   avatar: File | null;
 }
+
+function formatFormData(payload: ProfileDetails): FormData {
+  const formData = new FormData();
+  formData.append("username", payload["username"]);
+  if (payload["avatar"]) formData.append("avatar", payload["avatar"]);
+  return formData;
+}
+
+type RejectedError = unknown & AxiosError;
+type RejectedResponse = { message: string };
 
 export const sendDetails = async (details: ProfileDetails) => {
   const formData = formatFormData(details);
