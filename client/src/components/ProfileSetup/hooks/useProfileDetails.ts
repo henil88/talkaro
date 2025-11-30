@@ -11,7 +11,7 @@ export function useProfileDetails() {
     avatar: null,
   });
 
-  const updateField = (field: keyof ProfileDetails, value: string | File | null) => {
+  const updateField = (field: keyof ProfileDetails, value: unknown) => {
     setDetails(prev => ({ ...prev, [field]: value }));
   };
 
