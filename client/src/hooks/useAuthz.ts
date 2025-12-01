@@ -1,23 +1,16 @@
 import { useNavigate } from "react-router";
 import { useCallback } from "react";
-import { getAccessToken } from "../apis/auth/getAccessToken";
-import { getUserDetails } from "../apis/user/getUserDetails";
 import api from "../lib/axios";
+import { checkAuthorization } from "../utils/authUtils";
 
 const useAuthz = () => {
   const navigate = useNavigate();
 
   const handleClick = useCallback(async () => {
-    try {
-      const authResponse = await getAccessToken(api);
-      if (!authResponse?.isAuthorized) return navigate("/auth");
-      const user = await getUserDetails(api);
-      if (!user?.isActivated) return navigate("/signup");
-      navigate("/app");
-    } catch (err) {
-      console.error("ERROR_AUTHZ", err);
-      navigate("/auth");
-    }
+    const { isAuthorized, isActivated } = await checkAuthorization(api);
+    if (!isAuthorized) return navigate("/auth");
+    if (!isActivated) return navigate("/signup");
+    navigate("/app");
   }, [navigate]);
 
   return { handleClick };

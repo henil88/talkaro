@@ -1,4 +1,6 @@
 import { redirect, type LoaderFunctionArgs } from "react-router-dom";
+import { checkAuthorization } from "../utils/authUtils";
+import api from "../lib/axios";
 import { store } from "../store";
 
 /**
@@ -14,12 +16,16 @@ export const protectedLoader = (
     const { isAuthorized } = state.auth;
     const { isActivated } = state.user;
 
-    if (!isAuthorized) {
-      throw redirect("/auth");
-    }
+    if (!isAuthorized || !isActivated) {
+      const { isActivated, isAuthorized } = await checkAuthorization(api);
 
-    if (!isActivated) {
-      throw redirect("/signup");
+      if (!isAuthorized) {
+        throw redirect("/auth");
+      }
+
+      if (!isActivated) {
+        throw redirect("/signup");
+      }
     }
 
     if (innerLoader) {
