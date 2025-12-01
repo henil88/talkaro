@@ -1,5 +1,5 @@
 import type { AxiosError } from "axios";
-import api from "../lib/axios";
+import api from "../../lib/axios";
 
 interface ProfileDetails {
   username: string;
@@ -16,12 +16,18 @@ function formatFormData(payload: ProfileDetails): FormData {
 type RejectedError = unknown & AxiosError;
 type RejectedResponse = { message: string };
 
+type ResponseType = { success: boolean; message: string };
+
 export const sendDetails = async (details: ProfileDetails) => {
   const formData = formatFormData(details);
   try {
-    const response = await api.post("/api/user-details", formData, {
-      headers: { "Content-Type": "multipart/form-data" },
-    });
+    const response = await api.post<ResponseType>(
+      "/api/user-details",
+      formData,
+      {
+        headers: { "Content-Type": "multipart/form-data" },
+      }
+    );
     console.log(response.data);
     return response.data;
   } catch (err) {
