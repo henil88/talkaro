@@ -35,10 +35,10 @@ const useEmailPhone: CustomHook<Props, HookResults> = ({ forward }) => {
       const data = await sendOTP(argument);
       if (data.success) return forward();
       // keep the user in and show the error
-      console.log("ERROR_SUBMITTING_CREDENTIALS", data);
+      console.error("ERROR_SUBMITTING_CREDENTIALS", data);
     } catch (err) {
       // keep the user in and show the error
-      console.log("ERROR_SUBMITTING_CREDENTIALS", err);
+      console.error("ERROR_SUBMITTING_CREDENTIALS", err);
     }
   };
 

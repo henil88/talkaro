@@ -1,6 +1,10 @@
+/* eslint-disable */
 import { useState } from "react";
 import Button from "../Button";
 import OtpInput from "./OtpInput";
+import { verifyOTP } from "../../apis/auth/verifyOTP";
+import { useAppSelector } from "../../store/hooks";
+import { useNavigate } from "react-router";
 
 type Props = {
   back: () => void;
@@ -8,7 +12,27 @@ type Props = {
 
 const useVerification = () => {
   const [otp, setOtp] = useState("");
-  const submit = () => otp.length === 4 && console.log("submit", otp);
+  const navigate = useNavigate();
+  const { credentials } = useAppSelector((state) => state.auth);
+  const { isActivated } = useAppSelector((state) => state.user);
+  const submit = async () => {
+    const finalOTP = otp.length === 4 ? otp : null;
+    const identifier = credentials?.email || credentials?.phone;
+    if (!finalOTP) return;
+    if (!identifier) {
+      console.error("Neither email nor phone was provided.");
+      navigate("/auth");
+      return;
+    }
+    try {
+      const { isAuthorized } = await verifyOTP({ identifier, otp });
+      if (!isAuthorized) return console.error("Wrong OTP");
+      if (!isActivated) return navigate("/auth");
+      navigate("/app");
+    } catch (err) {
+      console.error("ERROR_VERIFYING_OTP", err);
+    }
+  };
   const onChange = (value: string) => setOtp(value);
   return { onChange, submit };
 };

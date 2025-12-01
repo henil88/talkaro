@@ -1,15 +1,8 @@
 import type { AxiosError } from "axios";
 import api from "../lib/axios";
-
-type Identifier =
-  | {
-      email: string;
-      phone?: never;
-    }
-  | {
-      email?: never;
-      phone: string;
-    };
+import { store } from "../store";
+import { setCredentials } from "../features/auth/slice";
+import type { Identifier } from "../types/credentials";
 
 type RejectedError = unknown & AxiosError;
 type ResponseType = { success: boolean; message: string };
@@ -19,12 +12,13 @@ export const sendOTP = async ({ email, phone }: Identifier) => {
   const identifier = email || phone;
   if (!identifier) throw new Error("Neither email nor phone was provided.");
   try {
-    const response = await api.post<ResponseType>("/api/send-otp", {
+    const { data } = await api.post<ResponseType>("/api/send-otp", {
       email,
       phone,
     });
-    console.log(response.data.message);
-    return response.data;
+    if (data.success) console.log("SUCCESS_SENDING_CREDENTIALS", data);
+    store.dispatch(setCredentials({ email, phone }));
+    return data;
   } catch (err) {
     const errMsg =
       ((err as RejectedError)?.response?.data as ResponseType)?.message ||
