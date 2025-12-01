@@ -7,15 +7,13 @@ export async function getUserDetails(api: AxiosInstance) {
   try {
     const response = await api.get("/api/me");
     console.log("GET_USER", response.data);
-    store.dispatch(
-      setUser({
-        user: response.data.user,
-        isActivated: response.data.isActivated,
-      })
-    );
+    const { user, isActivated } = response.data;
+    if (!user) throw new Error("User object missing from server");
+    store.dispatch(setUser({ user, isActivated }));
     return response.data;
   } catch (err) {
     console.error("ERROR_GETTING_USER", err);
     router.navigate("/signup");
+    throw err;
   }
 }

@@ -1,10 +1,10 @@
-import type { AxiosError, AxiosInstance } from "axios";
+import type { AxiosInstance } from "axios";
 import { router } from "../../routes/route-handler";
 import { setToken } from "../../features/auth/slice";
 import { store } from "../../store";
 
 interface AccessTokenResponse {
-  token?: string;
+  token: string | null;
   isAuthorized: boolean;
 }
 
@@ -20,8 +20,8 @@ export async function getAccessToken(api: AxiosInstance) {
     );
     return response.data;
   } catch (err) {
-    console.log("ERROR_GETTING_ACCESS_TOKEN", (err as AxiosError).stack);
+    console.log("ERROR_GETTING_ACCESS_TOKEN", err);
     router.navigate("/auth");
-    return Promise.reject(null);
+    throw err;
   }
 }
