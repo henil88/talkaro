@@ -3,6 +3,7 @@ import Layout from "../layouts/Layout";
 import Home from "../pages/Home";
 import SignupDetails from "../pages/SignupDetails";
 import AuthFlow from "../pages/AuthFlow";
+import { protectedLoader } from "../loaders/protectedLoader";
 
 const router = createBrowserRouter([
   {
@@ -23,6 +24,7 @@ const router = createBrowserRouter([
       },
       {
         path: "/app",
+        loader: protectedLoader(),
         element: "Main Dashboard",
       },
     ],
