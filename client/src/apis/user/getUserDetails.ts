@@ -1,11 +1,11 @@
+import type { AxiosInstance } from "axios";
 import { setUser } from "../../features/user/slice";
-import api from "../../lib/axios";
 import { router } from "../../routes/route-handler";
 import { store } from "../../store";
 
-export async function getUser() {
+export async function getUserDetails(api: AxiosInstance) {
   try {
-    const response = await api.get("/api/user");
+    const response = await api.get("/api/me");
     console.log("GET_USER", response.data);
     store.dispatch(
       setUser({
