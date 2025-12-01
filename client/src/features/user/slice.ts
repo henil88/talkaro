@@ -1,4 +1,5 @@
 import { createSlice } from "@reduxjs/toolkit";
+import { logout } from "../auth/slice";
 
 interface State {
   isActivated: boolean;
@@ -21,11 +22,11 @@ const userSlice = createSlice({
     setIsActivated: (state, action) => {
       state.isActivated = action.payload.isActivated;
     },
-    logout: (state) => {
-      state.user = null;
-    },
+  },
+  extraReducers: (builder) => {
+    builder.addCase(logout, () => initialState);
   },
 });
 
-export const { logout, setUser,  } = userSlice.actions;
+export const { setUser } = userSlice.actions;
 export default userSlice.reducer;

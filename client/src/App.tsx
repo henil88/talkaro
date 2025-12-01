@@ -1,7 +1,10 @@
+import { Provider } from "react-redux";
 import { RouterProvider } from "react-router";
 import { router } from "./routes/route-handler";
+import { setupAxiosWithStore } from "./lib/setupAxiosWithStore";
 import { store } from "./store";
-import { Provider } from "react-redux";
+
+setupAxiosWithStore(store);
 
 const App = () => {
   return (

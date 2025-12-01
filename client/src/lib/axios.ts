@@ -1,43 +1,57 @@
-import axios, { type AxiosError, type InternalAxiosRequestConfig } from "axios";
-import { store } from "../store";
+import axios, { AxiosError, type InternalAxiosRequestConfig } from "axios";
 import { getAccessToken } from "../apis/auth/getAccessToken";
-import { logout } from "../features/auth/slice";
+
+let _token: string | null = null;
+let onLogout: (() => void) | null = null;
+
+export const setAuthToken = (token: string | null) => {
+  _token = token;
+};
+
+export const registerLogoutHandler = (fn: () => void) => {
+  onLogout = fn;
+};
 
 const axiosInstance = axios.create({
-  baseURL: import.meta.env.BACKEND_URL,
+  baseURL: import.meta.env.VITE_BACKEND_URL,
   withCredentials: true,
   headers: { "Content-Type": "application/json" },
 });
 
-axiosInstance.interceptors.request.use(
-  (config: InternalAxiosRequestConfig) => {
-    const token = store.getState().auth.token;
-    if (token) config.headers!["Authorization"] = `Bearer ${token}`;
-    return config;
-  },
-  (error: AxiosError) => Promise.reject(error)
-);
+// Attach token
+axiosInstance.interceptors.request.use((config) => {
+  if (_token) {
+    config.headers = config.headers ?? {};
+    config.headers["Authorization"] = `Bearer ${_token}`;
+  }
+  return config;
+});
 
 interface CustomAxiosRequestConfig extends InternalAxiosRequestConfig {
   _retry?: boolean;
 }
 
+// Refresh token logic
 axiosInstance.interceptors.response.use(
-  (response) => response,
+  (res) => res,
   async (error: AxiosError) => {
-    const originalRequest = error.config as CustomAxiosRequestConfig;
+    const originalReq = error.config as CustomAxiosRequestConfig;
 
-    if (error.response?.status === 401 && !originalRequest._retry) {
-      originalRequest._retry = true;
+    if (error.response?.status === 401 && !originalReq._retry) {
+      originalReq._retry = true;
       try {
+        // You must rewrite getAccessToken to NOT import store!
         const { token } = await getAccessToken(axiosInstance);
-        originalRequest.headers!["Authorization"] = `Bearer ${token}`;
-        return axiosInstance(originalRequest);
-      } catch (error) {
-        console.error("TOKEN_REQUEST_FAILED", error);
-        store.dispatch(logout());
+        setAuthToken(token ?? null);
+
+        originalReq.headers["Authorization"] = `Bearer ${token}`;
+        return axiosInstance(originalReq);
+      } catch (e) {
+        console.error("TOKEN_REQUEST_FAILED", e);
+        onLogout?.();
       }
     }
+    return Promise.reject(error);
   }
 );
 
