@@ -3,33 +3,43 @@ import PhoneIcon from "../icons/Phone";
 import EmailIcon from "../icons/Email";
 import OptionButton from "./OptionButton";
 import { GeneratedForm } from "./form/GeneratedForm";
+import { sendOTP } from "../../apis/sendOTP";
 
 type Props = {
   forward: () => void;
-}
+};
 
 type CustomHook<T, P> = (param: T) => P;
+type Options = "phone" | "email";
 
 interface HookResults {
-  option: "phone" | "email";
+  option: Options;
   input: string;
   setInput: React.Dispatch<React.SetStateAction<string>>;
   submit: () => void;
-  selectOption: (next: "phone" | "email") => void;
+  selectOption: (next: Options) => void;
 }
 
 const useEmailPhone: CustomHook<Props, HookResults> = ({ forward }) => {
-  const [option, setOption] = useState<"phone" | "email">("phone");
+  const [option, setOption] = useState<Options>("phone");
   const [input, setInput] = useState("");
 
-  const selectOption = (next: "phone" | "email") => {
+  const selectOption = (next: Options) => {
     setOption(next);
     setInput("");
   };
 
-  const submit = () => {
-    console.log(input);
-    forward();
+  const submit = async () => {
+    const argument = option === "phone" ? { phone: input } : { email: input };
+    try {
+      const data = await sendOTP(argument);
+      if (data.success) return forward();
+      // keep the user in and show the error
+      console.log("ERROR_SUBMITTING_CREDENTIALS", data);
+    } catch (err) {
+      // keep the user in and show the error
+      console.log("ERROR_SUBMITTING_CREDENTIALS", err);
+    }
   };
 
   return {
@@ -49,9 +59,9 @@ const buttonBGClasses = {
   inactive: "bg-neutral-900",
 };
 
-
 const EmailPhone: React.FC<Props> = (props) => {
-  const { option, input, setInput, submit, selectOption } = useEmailPhone(props);
+  const { option, input, setInput, submit, selectOption } =
+    useEmailPhone(props);
 
   return (
     <div>

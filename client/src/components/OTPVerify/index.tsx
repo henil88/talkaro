@@ -1,7 +1,11 @@
 import Button from "../Button";
 import OtpInput from "./OtpInput";
 
-const Verification: React.FC = () => {
+type Props = {
+  back: () => void;
+};
+
+const Verification: React.FC<Props> = () => {
   return (
     <>
       <div className="w-xl bg-zinc-900 py-22 rounded-2xl px-8 flex flex-col gap-10">

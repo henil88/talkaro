@@ -12,12 +12,9 @@ export async function getAccessToken(api: AxiosInstance) {
   try {
     const response = await api.get<AccessTokenResponse>("/api/refresh");
     console.log("GET_ACCESS_TOKEN", response.data);
-    store.dispatch(
-      setToken({
-        token: response.data.token,
-        isAuthorized: response.data.isAuthorized,
-      })
-    );
+    const { token, isAuthorized } = response.data;
+    if (!token) throw new Error("Access Token missing from server");
+    store.dispatch(setToken({ token, isAuthorized }));
     return response.data;
   } catch (err) {
     console.log("ERROR_GETTING_ACCESS_TOKEN", err);

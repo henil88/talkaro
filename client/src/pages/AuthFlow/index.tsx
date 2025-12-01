@@ -6,10 +6,10 @@ import OTPVerify from "../../components/OTPVerify";
 const AuthFlow = () => {
   const [next, setNext] = useState(false);
 
-  const Outlet = !next ? (
-    <AuthInput forward={() => setNext(!next)} />
+  const Outlet = next ? (
+    <OTPVerify back={() => setNext(false)} />
   ) : (
-    <OTPVerify />
+    <AuthInput forward={() => setNext(true)} />
   );
 
   return <RegisterOutlet>{Outlet}</RegisterOutlet>;
