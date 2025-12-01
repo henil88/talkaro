@@ -8,7 +8,7 @@ export async function getUserDetails(api: AxiosInstance) {
     const response = await api.get("/api/me");
     console.log("GET_USER", response.data);
     const { user, isActivated } = response.data;
-    if (!user) throw new Error("User object missing from server");
+    if (!user) console.error("User object missing from server");
     store.dispatch(setUser({ user, isActivated }));
     return response.data;
   } catch (err) {

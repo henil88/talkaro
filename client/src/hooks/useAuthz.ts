@@ -10,15 +10,9 @@ const useAuthz = () => {
   const handleClick = useCallback(async () => {
     try {
       const authResponse = await getAccessToken(api);
-      if (!authResponse?.isAuthorized) {
-        navigate("/auth");
-        return;
-      }
+      if (!authResponse?.isAuthorized) return navigate("/auth");
       const user = await getUserDetails(api);
-      if (!user?.isActivated) {
-        navigate("/signup");
-        return;
-      }
+      if (!user?.isActivated) return navigate("/signup");
       navigate("/app");
     } catch (err) {
       console.error("ERROR_AUTHZ", err);

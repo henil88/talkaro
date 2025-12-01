@@ -7,7 +7,7 @@ import { store } from "../store";
  * loader: protectedLoader(async (args) => { ... })
  */
 export const protectedLoader = (
-  innerLoader?: (args: LoaderFunctionArgs) => Promise<Response | unknown>
+  innerLoader?: (args: LoaderFunctionArgs) => Promise<unknown>
 ) => {
   return async (args: LoaderFunctionArgs) => {
     const state = store.getState();

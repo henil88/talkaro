@@ -5,7 +5,7 @@ import InputWithLabel from "./InputWithLabel";
 import Terms from "./Terms";
 import { usePhoneFormat } from "./usePhoneFormat";
 
-export const GeneratedForm = ({
+const GeneratedForm = ({
   field,
   input,
   setInput,
@@ -54,3 +54,5 @@ export const GeneratedForm = ({
     </FormContainer>
   );
 };
+
+export default GeneratedForm;
