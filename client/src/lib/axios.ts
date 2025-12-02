@@ -40,7 +40,6 @@ axiosInstance.interceptors.response.use(
     if (error.response?.status === 401 && !originalReq._retry) {
       originalReq._retry = true;
       try {
-        // You must rewrite getAccessToken to NOT import store!
         const { token } = await getAccessToken(axiosInstance);
         setAuthToken(token ?? null);
 

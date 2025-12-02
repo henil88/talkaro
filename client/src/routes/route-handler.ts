@@ -4,6 +4,7 @@ import Home from "../pages/Home";
 import SignupDetails from "../pages/SignupDetails";
 import AuthFlow from "../pages/AuthFlow";
 import { protectedLoader } from "../loaders/protectedLoader";
+import { signupProtectedLoader } from "@/loaders/semiProtectedLoader";
 
 const router = createBrowserRouter([
   {
@@ -20,6 +21,7 @@ const router = createBrowserRouter([
       },
       {
         path: "/signup",
+        loader: signupProtectedLoader(),
         Component: SignupDetails,
       },
       {
