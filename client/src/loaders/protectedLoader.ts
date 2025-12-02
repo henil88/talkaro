@@ -15,23 +15,12 @@ export const protectedLoader = (
     const state = store.getState();
     const { isAuthorized } = state.auth;
     const { isActivated } = state.user;
-
     if (!isAuthorized || !isActivated) {
       const { isActivated, isAuthorized } = await checkAuthorization(api);
-
-      if (!isAuthorized) {
-        throw redirect("/auth");
-      }
-
-      if (!isActivated) {
-        throw redirect("/signup");
-      }
+      if (!isAuthorized) throw redirect("/auth");
+      if (!isActivated) throw redirect("/signup");
     }
-
-    if (innerLoader) {
-      return innerLoader(args);
-    }
-
+    if (innerLoader) return innerLoader(args);
     return null;
   };
 };
