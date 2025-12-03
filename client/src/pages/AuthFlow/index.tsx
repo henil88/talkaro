@@ -2,7 +2,6 @@ import { useState } from "react";
 import RegisterOutlet from "../../layouts/RegisterOutlet";
 import AuthInput from "../../components/AuthInput";
 import OTPVerify from "../../components/OTPVerify";
-
 const AuthFlow = () => {
   const [next, setNext] = useState(false);
 

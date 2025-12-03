@@ -9,8 +9,7 @@ export const checkAuthorization = async (api: AxiosInstance) => {
     const user = await getUserDetails(api);
     if (!user?.isActivated) return { isAuthorized: true, isActivated: false };
     return { isAuthorized: true, isActivated: true };
-  } catch (err) {
-    console.error("ERROR_AUTHZ", err);
+  } catch {
     return { isAuthorized: false, isActivated: false };
   }
 };

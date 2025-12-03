@@ -1,7 +1,10 @@
 import { useState } from "react";
 import { useNavigate } from "react-router";
-import { verifyOTP } from "../../../apis/auth/verifyOTP";
-import { useAppSelector } from "../../../store/hooks";
+import { verifyOTP } from "@/apis/auth/verifyOTP";
+import { useAppSelector } from "@/store/hooks";
+import { toast } from "sonner";
+import { getUserDetails } from "@/apis/user/getUserDetails";
+import api from "@/lib/axios";
 
 export interface VerificationProps {
   back: () => void;
@@ -12,7 +15,6 @@ export const useVerification = ({ back }: VerificationProps) => {
   const navigate = useNavigate();
 
   const { credentials } = useAppSelector((state) => state.auth);
-  const { isActivated } = useAppSelector((state) => state.user);
 
   const submit = async () => {
     const finalOTP = otp.length === 4 ? otp : null;
@@ -24,23 +26,22 @@ export const useVerification = ({ back }: VerificationProps) => {
       console.error("No email or phone provided.");
       return back();
     }
-
-    try {
-      const { isAuthorized } = await verifyOTP({ identifier, otp });
-
-      if (!isAuthorized) {
-        console.error("Wrong OTP");
-        return;
-      }
-
-      if (!isActivated) {
-        return navigate("/signup");
-      }
-
-      navigate("/app");
-    } catch (err) {
-      console.error("VERIFY_OTP_ERROR", err);
-    }
+    const promise = verifyOTP({ identifier, otp });
+    toast.promise(promise, {
+      loading: "Verifying OTP…",
+      success: async (data) => {
+        const { isAuthorized } = data;
+        if (!isAuthorized) throw "Invalid OTP. Try again.";
+        const { isActivated } = await getUserDetails(api);
+        if (!isActivated) {
+          navigate("/signup");
+          return "Account exists but isn’t activated yet.";
+        }
+        navigate("/app");
+        return "OTP verified. You’re good to go.";
+      },
+      error: "Verification failed: Invalid OTP. Try again.",
+    });
   };
 
   return {

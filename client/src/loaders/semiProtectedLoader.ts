@@ -16,6 +16,6 @@ export const signupProtectedLoader = (
     if (!isAuthorized) throw redirect("/auth");
     if (isAuthorized && !isActivated) return null;
     if (innerLoader) return innerLoader(args);
-    return null;
+    return redirect("/app");
   };
 };
