@@ -7,42 +7,41 @@ import { useAppSelector } from "@/store/hooks";
 
 const useAuthz = () => {
   const navigate = useNavigate();
-  const { isAuthorized } = useAppSelector((state) => state.auth);
-  const { isActivated } = useAppSelector((state) => state.user);
+  const { isAuthorized, isActivated } = useAppSelector((state) => ({
+    isAuthorized: state.auth.isAuthorized,
+    isActivated: state.user.isActivated,
+  }));
 
-  const handleClick = useCallback(() => {
-    toast.promise(
-      async () => {
-        if (!isAuthorized && !isActivated) {
-          const { isAuthorized, isActivated } = await checkAuthorization(api);
-          if (!isAuthorized) throw { type: "unauthorized" };
-          if (!isActivated) return { type: "inactive" };
-        }
-        return { type: "ok" };
-      },
-      {
-        loading: "Checking authorization…",
-        success: (result) => {
-          if (result.type === "inactive") {
-            navigate("/signup");
-            return "Activate your account to continue.";
-          }
-          if (result.type === "ok") {
-            navigate("/app");
-            return "Welcome back - redirecting to dashboard.";
-          }
-          return "Success.";
-        },
-        error: (err) => {
-          if (err?.type === "unauthorized") {
-            navigate("/auth");
-            return "Access denied - please sign in or create an account.";
-          }
-          return "Something went wrong - try again later.";
-        },
+  const handleClick = useCallback(async () => {
+    const dismiss = toast.loading("Checking authorization…");
+
+    try {
+      const status =
+        isAuthorized && isActivated
+          ? { isAuthorized: true, isActivated: true }
+          : await checkAuthorization(api);
+
+      toast.dismiss(dismiss);
+
+      if (!status.isAuthorized) {
+        navigate("/auth");
+        toast.error("Access denied – please sign in or create an account.");
+        return;
       }
-    );
-  }, [navigate]);
+
+      if (!status.isActivated) {
+        navigate("/signup");
+        toast.warning("Activate your account to continue.");
+        return;
+      }
+
+      navigate("/app");
+      toast.success("Welcome back – redirecting to dashboard.");
+    } catch {
+      toast.dismiss(dismiss);
+      toast.error("Something went wrong – try again later.");
+    }
+  }, [navigate, isAuthorized, isActivated]);
 
   return { handleClick };
 };

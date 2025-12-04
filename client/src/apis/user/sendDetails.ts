@@ -1,39 +1,33 @@
-import type { AxiosError } from "axios";
-import api from "../../lib/axios";
+import api from "@/lib/axios";
+import { store } from "@/store";
+import { setUser } from "@/features/user/slice";
 
 interface ProfileDetails {
   username: string;
   avatar: File | null;
 }
 
-function formatFormData(payload: ProfileDetails): FormData {
+function formatFormData({ username, avatar }: ProfileDetails): FormData {
   const formData = new FormData();
-  formData.append("username", payload["username"]);
-  if (payload["avatar"]) formData.append("avatar", payload["avatar"]);
+  formData.append("username", username);
+  if (avatar) formData.append("avatar", avatar);
   return formData;
 }
 
-type RejectedError = unknown & AxiosError;
-type RejectedResponse = { message: string };
-
-type ResponseType = { success: boolean; message: string };
+type ResponseType = {
+  success: boolean;
+  message: string;
+  user: unknown;
+  isActivated: boolean;
+};
 
 export const sendDetails = async (details: ProfileDetails) => {
-  const formData = formatFormData(details);
-  try {
-    const response = await api.post<ResponseType>(
-      "/api/user-details",
-      formData,
-      {
-        headers: { "Content-Type": "multipart/form-data" },
-      }
-    );
-    console.log(response.data);
-    return response.data;
-  } catch (err) {
-    const errMsg =
-      ((err as RejectedError)?.response?.data as RejectedResponse)?.message ||
-      "Error sending Details";
-    console.error(errMsg);
-  }
+  const { data } = await api.post<ResponseType>(
+    "/api/user-details",
+    formatFormData(details),
+    { headers: { "Content-Type": "multipart/form-data" } }
+  );
+
+  if (data.success) store.dispatch(setUser(data));
+  return data;
 };

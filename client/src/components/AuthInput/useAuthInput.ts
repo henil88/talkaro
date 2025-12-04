@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { sendOTP } from "../../apis/sendOTP";
+import { sendOTP } from "@/apis/sendOTP";
 import { toast } from "sonner";
 
 export type Option = "phone" | "email";
@@ -25,24 +25,18 @@ export const useAuthInput = ({ forward }: UseAuthInputProps): HookResults => {
     setInput("");
   };
 
-  const submit = async () => {
+  const submit = () => {
     const argument = option === "phone" ? { phone: input } : { email: input };
 
-    try {
-      const promise = sendOTP(argument);
-      toast.promise(promise, {
-        loading: "Sending credentials…",
-        success: (data) => {
-          if (data.success) {
-            forward();
-            return "OTP sent. Check your inbox and continue.";
-          } else throw null;
-        },
-        error: "Couldn’t send credentials. Check the info and try again.",
-      });
-    } catch (err) {
-      console.error("OTP_ERROR", err);
-    }
+    toast.promise(sendOTP(argument), {
+      loading: "Sending credentials…",
+      success: (data) => {
+        if (!data.success) throw new Error();
+        forward();
+        return "OTP sent. Check your inbox and continue.";
+      },
+      error: "Couldn’t send credentials. Check the info and try again.",
+    });
   };
 
   return { option, input, setInput, submit, selectOption };

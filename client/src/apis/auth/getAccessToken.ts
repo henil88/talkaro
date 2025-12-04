@@ -1,23 +1,34 @@
 import type { AxiosInstance } from "axios";
-import { router } from "../../routes/route-handler";
-import { setToken } from "../../features/auth/slice";
-import { store } from "../../store";
+import { router } from "@/routes/route-handler";
+import { setToken } from "@/features/auth/slice";
+import { store } from "@/store";
+import { toast } from "sonner";
 
 interface AccessTokenResponse {
   token: string | null;
   isAuthorized: boolean;
 }
 
-export async function getAccessToken(api: AxiosInstance) {
+export async function getAccessToken(
+  api: AxiosInstance,
+  options: { toast: boolean } = { toast: false }
+) {
   try {
-    const response = await api.get<AccessTokenResponse>("/api/refresh");
-    console.log("GET_ACCESS_TOKEN", response.data);
-    const { token, isAuthorized } = response.data;
-    if (!token) throw new Error("Access Token missing from server");
+    const { data } = await api.get<AccessTokenResponse>("/api/refresh");
+    const { token, isAuthorized } = data;
+
+    if (!token) {
+      if (options.toast) {
+        toast.error(
+          "Access token is missing. Please try again or contact support."
+        );
+      }
+      throw new Error("Access Token missing from server");
+    }
+
     store.dispatch(setToken({ token, isAuthorized }));
-    return response.data;
+    return data;
   } catch (err) {
-    console.log("ERROR_GETTING_ACCESS_TOKEN", err);
     router.navigate("/auth");
     throw err;
   }

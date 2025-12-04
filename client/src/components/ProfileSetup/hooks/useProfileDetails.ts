@@ -1,6 +1,7 @@
 import { useCallback, useState } from "react";
-import { sendDetails } from "../../../apis/user/sendDetails";
+import { sendDetails } from "@/apis/user/sendDetails";
 import { useNavigate } from "react-router";
+import { toast } from "sonner";
 
 export interface ProfileDetails {
   username: string;
@@ -18,9 +19,17 @@ export function useProfileDetails() {
     setDetails((prev) => ({ ...prev, [field]: value }));
   };
 
-  const handleSubmit = useCallback(async () => {
-    const data = await sendDetails(details);
-    if (data?.success) return navigate("/app");
+  const handleSubmit = useCallback(() => {
+    toast.promise(sendDetails(details), {
+      loading: "Processing your request…",
+      success: (data) => {
+        if (!data?.success) throw new Error();
+        navigate("/app");
+        return "Account activated. Redirecting to your dashboard.";
+      },
+      error: () =>
+        "An error occurred. Please review the details and try again.",
+    });
   }, [details, navigate]);
 
   return { details, updateField, handleSubmit };

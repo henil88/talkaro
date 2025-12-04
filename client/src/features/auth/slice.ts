@@ -1,5 +1,5 @@
 import { createSlice } from "@reduxjs/toolkit";
-import type { Identifier } from "../../types/credentials";
+import type { Identifier } from "@/types/credentials";
 
 interface State {
   token: string | null;

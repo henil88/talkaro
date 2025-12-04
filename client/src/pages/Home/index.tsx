@@ -1,5 +1,5 @@
-import Button from "../../components/Button";
-import useAuthz from "../../hooks/useAuthz";
+import Button from "@/components/Button";
+import useAuthz from "@/hooks/useAuthz";
 
 const Home = () => {
   const { handleClick } = useAuthz();

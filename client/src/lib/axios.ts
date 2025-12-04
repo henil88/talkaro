@@ -1,15 +1,15 @@
 import axios, { AxiosError, type InternalAxiosRequestConfig } from "axios";
-import { getAccessToken } from "../apis/auth/getAccessToken";
+import { getAccessToken } from "@/apis/auth/getAccessToken";
 
-let _token: string | null = null;
-let onLogout: (() => void) | null = null;
+let token: string | null = null;
+let logoutHandler: (() => void) | null = null;
 
-export const setAuthToken = (token: string | null) => {
-  _token = token;
+export const setAuthToken = (value: string | null) => {
+  token = value;
 };
 
 export const registerLogoutHandler = (fn: () => void) => {
-  onLogout = fn;
+  logoutHandler = fn;
 };
 
 const axiosInstance = axios.create({
@@ -18,11 +18,10 @@ const axiosInstance = axios.create({
   headers: { "Content-Type": "application/json" },
 });
 
-// Attach token
 axiosInstance.interceptors.request.use((config) => {
-  if (_token) {
+  if (token) {
     config.headers = config.headers ?? {};
-    config.headers["Authorization"] = `Bearer ${_token}`;
+    config.headers.Authorization = `Bearer ${token}`;
   }
   return config;
 });
@@ -31,7 +30,6 @@ interface CustomAxiosRequestConfig extends InternalAxiosRequestConfig {
   _retry?: boolean;
 }
 
-// Refresh token logic
 axiosInstance.interceptors.response.use(
   (res) => res,
   async (error: AxiosError) => {
@@ -39,17 +37,20 @@ axiosInstance.interceptors.response.use(
 
     if (error.response?.status === 401 && !originalReq._retry) {
       originalReq._retry = true;
-      try {
-        const { token } = await getAccessToken(axiosInstance);
-        setAuthToken(token ?? null);
 
-        originalReq.headers["Authorization"] = `Bearer ${token}`;
+      try {
+        const { token: newToken } = await getAccessToken(axiosInstance);
+        setAuthToken(newToken ?? null);
+
+        originalReq.headers = originalReq.headers ?? {};
+        originalReq.headers.Authorization = `Bearer ${newToken}`;
+
         return axiosInstance(originalReq);
-      } catch (e) {
-        console.error("TOKEN_REQUEST_FAILED", e);
-        onLogout?.();
+      } catch {
+        logoutHandler?.();
       }
     }
+
     return Promise.reject(error);
   }
 );

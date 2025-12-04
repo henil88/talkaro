@@ -1,5 +1,5 @@
-import RegisterOutlet from "../../layouts/RegisterOutlet";
-import ProfileSetup from "../../components/ProfileSetup";
+import RegisterOutlet from "@/layouts/RegisterOutlet";
+import ProfileSetup from "@/components/ProfileSetup";
 
 const SignupDetails = () => {
   return (

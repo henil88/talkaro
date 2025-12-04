@@ -1,4 +1,4 @@
-import Button from "../../Button";
+import Button from "@/components/Button";
 import { fieldConfig } from "./fieldConfig";
 import FormContainer from "./FormContainer";
 import InputWithLabel from "./InputWithLabel";
