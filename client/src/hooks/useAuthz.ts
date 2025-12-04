@@ -7,10 +7,8 @@ import { useAppSelector } from "@/store/hooks";
 
 const useAuthz = () => {
   const navigate = useNavigate();
-  const { isAuthorized, isActivated } = useAppSelector((state) => ({
-    isAuthorized: state.auth.isAuthorized,
-    isActivated: state.user.isActivated,
-  }));
+  const isAuthorized = useAppSelector((state) => state.auth.isAuthorized);
+  const isActivated = useAppSelector((state) => state.user.isActivated);
 
   const handleClick = useCallback(async () => {
     const dismiss = toast.loading("Checking authorization…");
