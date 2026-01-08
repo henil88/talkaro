@@ -1,7 +1,7 @@
 import { useVerification } from "./hooks/useVerification";
 import { wrapperClasses, headingClasses } from "./constants";
-import OtpInput from "./OtpInput";
 import Button from "../Button";
+import FourDigitOTP from "./FourDigitOTP";
 
 type Props = {
   back: () => void;
@@ -19,15 +19,15 @@ const Verification: React.FC<Props> = (props) => {
 
         <div className="w-full flex justify-center items-center">
           <label className="input-box rounded-lg flex justify-center items-center w-[18rem] h-12">
-              <OtpInput length={4} onChange={onChange} />
+            <FourDigitOTP onChange={onChange} />
           </label>
         </div>
       </div>
 
       <div className="w-full flex justify-center items-center flex-col gap-5">
-          <Button className="w-[11.12rem]" onClick={submit}>
-            Next
-          </Button>
+        <Button className="w-[11.12rem]" onClick={submit}>
+          Next
+        </Button>
       </div>
     </div>
   );
