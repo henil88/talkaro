@@ -2,8 +2,8 @@ import { Skeleton } from "@/components/ui/skeleton";
 
 const CenteredCardSkeleton = () => {
   return (
-    <div className="flex max-h-screen h-full items-center justify-center">
-      <div className="w-full max-w-md rounded-2xl bg-neutral-900 px-8 py-10 shadow-lg">
+    <div className="flex max-h-screen h-full w-screen items-center justify-center">
+      <div className="w-full max-w-lg rounded-2xl bg-neutral-900 px-8 py-10 shadow-lg">
         <div className="flex flex-col items-center space-y-6">
           <div className="flex w-full items-center justify-center gap-4">
             <Skeleton className="h-7 w-7 rounded-full bg-neutral-800" />

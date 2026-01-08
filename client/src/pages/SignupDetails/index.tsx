@@ -1,10 +1,15 @@
+import CenteredCardSkeleton from "@/components/skeletons/CenteredCardSkeleton";
 import RegisterOutlet from "@/layouts/RegisterOutlet";
-import ProfileSetup from "@/components/ProfileSetup";
+import { lazy, Suspense } from "react";
+
+const ProfileSetup = lazy(() => import("@/components/ProfileSetup"));
 
 const SignupDetails = () => {
   return (
     <RegisterOutlet>
-      <ProfileSetup />
+      <Suspense fallback={<CenteredCardSkeleton />}>
+        <ProfileSetup />
+      </Suspense>
     </RegisterOutlet>
   );
 };

@@ -1,18 +1,20 @@
 import { createBrowserRouter } from "react-router";
+import { lazy } from "react";
 import Layout from "@/layouts/Layout";
 import Home from "@/pages/Home";
-import SignupDetails from "@/pages/SignupDetails";
-import AuthFlow from "@/pages/AuthFlow";
 import { protectedLoader } from "@/loaders/protectedLoader";
 import { signupProtectedLoader } from "@/loaders/semiProtectedLoader";
 import CenteredCardSkeleton from "@/components/skeletons/CenteredCardSkeleton";
+
+const AuthFlow = lazy(() => import("@/pages/AuthFlow"));
+const SignupDetails = lazy(() => import("@/pages/SignupDetails"));
 
 const router = createBrowserRouter([
   {
     path: "/",
     Component: Layout,
     children: [
-      { index: true, HydrateFallback: CenteredCardSkeleton, Component: Home },
+      { index: true, Component: Home },
       {
         path: "/auth",
         HydrateFallback: CenteredCardSkeleton,

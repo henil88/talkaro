@@ -4,18 +4,14 @@ import { router } from "@/routes/route-handler";
 import { setupAxiosWithStore } from "./lib/setupAxiosWithStore";
 import { store } from "./store";
 import { Toaster } from "@/components/ui/sonner";
-import { Suspense } from "react";
-setupAxiosWithStore(store);
 
-const HydrateFallback = () => <div>Loading...</div>;
+setupAxiosWithStore(store);
 
 const App = () => {
   return (
     <Provider store={store}>
-      <Suspense fallback={<HydrateFallback />}>
-        <RouterProvider router={router} />
-        <Toaster />
-      </Suspense>
+      <RouterProvider router={router} />
+      <Toaster />
     </Provider>
   );
 };
