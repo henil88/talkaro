@@ -1,9 +1,14 @@
 import { createSlice } from "@reduxjs/toolkit";
 import { logout } from "../auth/slice";
 
+interface User {
+  name: string;
+  avatar: string;
+}
+
 interface State {
   isActivated: boolean;
-  user: unknown | null;
+  user: null | User;
 }
 
 const initialState: State = {

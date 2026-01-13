@@ -11,14 +11,12 @@ const useAuthz = () => {
   const isActivated = useAppSelector((state) => state.user.isActivated);
 
   const handleClick = useCallback(async () => {
+    const fromRedux = isAuthorized && isActivated;
+    if (fromRedux) return navigate("/app");
     const dismiss = toast.loading("Checking authorization…");
 
     try {
-      const status =
-        isAuthorized && isActivated
-          ? { isAuthorized: true, isActivated: true }
-          : await checkAuthorization(api);
-
+      const status = await checkAuthorization(api);
       toast.dismiss(dismiss);
 
       if (!status.isAuthorized) {
