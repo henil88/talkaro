@@ -26,11 +26,9 @@ class Otpservice {
   }
 
   //veryfy sended otp
-  verifyOtp(hashed:string,data:string) {
-
-    const computedHas = hashService.hashOtp(data)
-    return hashed === computedHas
-
+  verifyOtp(hashed: string, data: string) {
+    const computedHas = hashService.hashOtp(data);
+    return hashed === computedHas;
   }
 }
 
