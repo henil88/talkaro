@@ -3,6 +3,8 @@ import otpService from "../services/otp-service";
 import hashService from "../services/hash-service";
 import userService from "../services/user-service";
 import tokenService from "../services/token-service";
+import UserDto from "../dtos/userDto";
+import { UserDocument } from "../models/user-model";
 
 class AuthController {
   //send-otp-function
@@ -69,7 +71,7 @@ class AuthController {
       });
     }
 
-    let user;
+    let user: UserDocument | null = null;
 
     try {
       user = await userService.findUser({ phone });
@@ -78,16 +80,19 @@ class AuthController {
       }
     } catch (err) {
       console.log(err);
-      res.status(500).json({
+      return res.status(500).json({
         message: "Db Error",
       });
     }
 
-    // if (!user) {
-    //   throw new Error("user not available");
-    // }
+    if (!user) {
+      return res.status(500).json({
+        message: "user not available",
+      });
+    }
+
     const { accesToken, refreshToken } = tokenService.ganrateToken({
-      _id: user!._id.toString(),
+      _id: user._id.toString(),
       activated: false,
     });
 
@@ -96,8 +101,10 @@ class AuthController {
       httpOnly: true,
     });
 
+    const userDto = new UserDto(user);
     res.json({
       accesToken,
+      userDto,
     });
   }
 }
