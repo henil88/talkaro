@@ -19,6 +19,7 @@ class AuthController {
 
     // gamrate otp
     const otp = await otpService.genrateOtp();
+    console.log(otp);
 
     //crete data with expireTime
     const ttl = 1000 * 60 * 1;
@@ -96,6 +97,8 @@ class AuthController {
       activated: false,
     });
 
+    await tokenService.storeRefreshToken(refreshToken, user._id.toString());
+    
     res.cookie("refreshToken", refreshToken, {
       maxAge: 1000 * 60 * 60 * 24 * 30,
       httpOnly: true,
