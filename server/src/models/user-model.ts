@@ -1,11 +1,14 @@
-import mongoose from "mongoose";
+import mongoose, { HydratedDocument } from "mongoose";
 
-interface IUSER {
+ interface IUSER {
   phone: string;
   activated: boolean;
+  createdAt: Date;
 }
 
-const userSchema = new mongoose.Schema<IUSER>(
+export type UserDocument = HydratedDocument<IUSER>;
+
+const userSchema = new mongoose.Schema<UserDocument>(
   {
     phone: {
       type: String,
@@ -21,6 +24,6 @@ const userSchema = new mongoose.Schema<IUSER>(
   }
 );
 
-const userModel = mongoose.model("user", userSchema);
+const userModel = mongoose.model<UserDocument>("user", userSchema);
 
 export default userModel;
