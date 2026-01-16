@@ -1,7 +1,9 @@
 import mongoose, { HydratedDocument } from "mongoose";
 
- interface IUSER {
+interface IUSER {
   phone: string;
+  name: string;
+  avtar: string;
   activated: boolean;
   createdAt: Date;
 }
@@ -13,6 +15,14 @@ const userSchema = new mongoose.Schema<UserDocument>(
     phone: {
       type: String,
       required: true,
+    },
+    name: {
+      type: String,
+      require: false,
+    },
+    avtar: {
+      type: String,
+      require: false,
     },
     activated: {
       type: Boolean,
