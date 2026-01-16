@@ -1,44 +1,65 @@
-import { useCallback } from "react";
+import { memo, useCallback, type JSX } from "react";
 import { useNavigate } from "react-router-dom";
 import { useAppSelector } from "@/store/hooks";
 
-const Navbar = () => {
-  const navigate = useNavigate();
-  const { isActivated, user } = useAppSelector((state) => state.user);
+const ROUTES = {
+  HOME: "/",
+  PROFILE: "/profile",
+} as const;
 
-  const handleNavigateHome = useCallback(() => {
-    navigate("/");
+interface UserProfile {
+  name?: string;
+  avatar?: string;
+}
+
+const useNavbarState = (): {
+  isActivated: boolean;
+  user: UserProfile | null;
+} => {
+  const { isActivated, user } = useAppSelector((state) => state.user);
+  return { isActivated, user };
+};
+
+const Navbar = (): JSX.Element => {
+  const navigate = useNavigate();
+  const { isActivated, user } = useNavbarState();
+
+  const navigateToHome = useCallback((): void => {
+    navigate(ROUTES.HOME);
   }, [navigate]);
 
-  const handleNavigateProfile = useCallback(() => {
-    navigate("/profile");
+  const navigateToProfile = useCallback((): void => {
+    navigate(ROUTES.PROFILE);
   }, [navigate]);
 
   return (
-    <nav className="w-full flex items-center justify-between px-4 py-4 md:px-12">
+    <nav
+      className="flex w-full shrink-0 items-center justify-between py-4"
+      role="navigation"
+      aria-label="Main navigation"
+    >
       <button
         type="button"
-        onClick={handleNavigateHome}
-        className="flex cursor-pointer items-center gap-2"
+        onClick={navigateToHome}
+        className="flex items-center gap-2"
         aria-label="Go to home page"
       >
         <div className="Icon" aria-hidden="true" />
-        <span className="text-3xl md:text-4xl font-bitcount">Talkaro</span>
+        <span className="text-3xl font-bitcount md:text-4xl">Talkaro</span>
       </button>
-
-      {isActivated && (
+      {isActivated && user && (
         <button
           type="button"
-          onClick={handleNavigateProfile}
-          className="flex cursor-pointer items-center gap-5"
+          onClick={navigateToProfile}
+          className="flex items-center gap-5"
           aria-label="Go to profile"
         >
-          <span className="text-lg md:text-xl">{user?.name}</span>
-          <div className="size-12 overflow-hidden rounded-full md:size-14">
+          <span className="text-lg md:text-xl">{user.name}</span>
+          <div className="size-10 overflow-hidden rounded-full md:size-12">
             <img
-              src={user?.avatar}
-              alt={`${user?.name ?? "User"} avatar`}
-              className="h-full w-full rounded-full object-cover"
+              src={user.avatar}
+              alt={`${user.name ?? "User"} avatar`}
+              className="h-full w-full object-cover"
             />
           </div>
         </button>
@@ -47,4 +68,4 @@ const Navbar = () => {
   );
 };
 
-export default Navbar;
+export default memo(Navbar);

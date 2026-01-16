@@ -1,13 +1,18 @@
-import Navbar from "@/components/Navbar";
+import { memo, type FC } from "react";
 import { Outlet } from "react-router";
+import Navbar from "@/components/Navbar";
 
-const Layout = () => {
+const Layout: FC = () => {
   return (
-    <div className="w-full h-screen bg-zinc-950 text-zinc-50 flex flex-col">
-      <Navbar />
-      <Outlet />
+    <div className="flex h-screen w-full flex-col bg-zinc-950 px-4 text-zinc-50 md:px-12">
+      <header>
+        <Navbar />
+      </header>
+      <main className="flex min-h-0 flex-1">
+        <Outlet />
+      </main>
     </div>
   );
 };
 
-export default Layout;
+export default memo(Layout);
