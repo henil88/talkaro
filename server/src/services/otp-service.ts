@@ -18,11 +18,11 @@ class Otpservice {
 
   //send otp by sms
   async sendBySms(phone: string, otp: number) {
-    return await client.messages.create({
-      to: phone,
-      from: smsNum,
-      body: `Thank You for join Talkaro Your OTP is ${otp}`,
-    });
+    // return await client.messages.create({
+    //   to: phone,
+    //   from: smsNum,
+    //   body: `Thank You for join Talkaro Your OTP is ${otp}`,
+    // });
   }
 
   //veryfy sended otp

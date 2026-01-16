@@ -3,7 +3,7 @@ import tokenModel from "../models/token-model";
 const accesTokenScreat = process.env.ACCESS_TOKEN_SCREAT as string;
 const refreshTokenScreat = process.env.REFRESH_TOKEN_SCREAT as string;
 
-interface JwtPayload {
+export interface JwtPayload {
   _id: string;
   activated: boolean;
 }
@@ -31,6 +31,10 @@ class tokenService {
     } catch (error) {
       console.log(`we got some err to store refresh token in db ${error}`);
     }
+  }
+
+  async verifyAccesToken(token: string) {
+    return jwt.verify(token, accesTokenScreat) as JwtPayload;
   }
 }
 
