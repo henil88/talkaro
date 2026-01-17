@@ -41,7 +41,7 @@ const Navbar = (): JSX.Element => {
       <button
         type="button"
         onClick={navigateToHome}
-        className="flex items-center gap-2"
+        className="flex items-center"
         aria-label="Go to home page"
       >
         <div className="Icon" aria-hidden="true" />

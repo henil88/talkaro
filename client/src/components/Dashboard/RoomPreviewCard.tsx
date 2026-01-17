@@ -1,94 +1,129 @@
+import { memo, type FC } from "react";
+import { cn } from "@/lib/utils";
+
+/* =======================
+ * Types
+ * ======================= */
+
 interface Member {
   name: string;
   avatar?: string;
 }
 
-interface CardProps {
+interface RoomPreviewCardProps
+  extends React.ComponentPropsWithoutRef<"div"> {
   title: string;
-  members: Member[];
+  members: readonly Member[];
   count?: number;
 }
 
+/* =======================
+ * Constants
+ * ======================= */
+
 const MAX_VISIBLE_MEMBERS = 2;
 
-function MemberAvatar({
-  member,
-  positionClass,
-}: {
+/* =======================
+ * Subcomponents
+ * ======================= */
+
+interface MemberAvatarProps {
   member: Member;
   positionClass: string;
-}) {
-  return (
-    <div
-      className={`absolute ${positionClass} w-9 h-9 rounded-full overflow-hidden`}
-    >
-      <img
-        onContextMenu={() => false}
-        className="w-full h-full rounded-full object-cover"
-        src={member.avatar}
-        alt={member.name}
-      />
-    </div>
-  );
 }
 
-function MemberName({ member }: { member: Member }) {
+const MemberAvatar: FC<MemberAvatarProps> = memo(
+  ({ member, positionClass }) => {
+    if (!member.avatar) return null;
+
+    return (
+      <div
+        className={cn(
+          "absolute h-9 w-9 overflow-hidden rounded-full",
+          positionClass,
+        )}
+      >
+        <img
+          src={member.avatar}
+          alt={member.name}
+          draggable={false}
+          onContextMenu={(e) => e.preventDefault()}
+          className="h-full w-full rounded-full object-cover"
+        />
+      </div>
+    );
+  },
+);
+
+MemberAvatar.displayName = "MemberAvatar";
+
+interface MemberNameProps {
+  member: Member;
+}
+
+const MemberName: FC<MemberNameProps> = memo(({ member }) => {
   return (
-    <div className="name text-white font-normal">
+    <div className="text-white font-normal">
       <span>{member.name || "User"} </span>
       <span> 💬</span>
     </div>
   );
-}
+});
 
-function RoomPreviewCard({
+MemberName.displayName = "MemberName";
+
+/* =======================
+ * Main Component
+ * ======================= */
+const RoomPreviewCard: FC<RoomPreviewCardProps> = ({
   title,
   members,
   count,
-  ...props
-}: React.ComponentProps<"div"> & CardProps) {
+  className,
+  ...divProps
+}) => {
   const visibleMembers = members.slice(0, MAX_VISIBLE_MEMBERS);
+  const displayedCount = count ?? members.length;
 
   return (
     <div
-      className="bg-neutral-900 w-73 h-46 rounded-2xl p-5 select-none flex flex-col justify-between"
-      {...props}
+      {...divProps}
+      className={cn(
+        "flex h-46 min-w-73 select-none flex-col justify-between rounded-2xl bg-neutral-900 p-5",
+        className,
+      )}
     >
-      <div className="room-title text-white text-base mb-2.5 font-semibold">
-        <span>{title}</span>
+      <div className="mb-2.5 text-base font-semibold text-white">
+        {title}
       </div>
 
-      <div className="members flex justify-start gap-10.5">
-        <div className="members-img relative w-15 h-15">
-          {visibleMembers[0] && (
-            <MemberAvatar
-              member={visibleMembers[0]}
-              positionClass="top-0 left-0"
-            />
-          )}
-          {visibleMembers[1] && (
-            <MemberAvatar
-              member={visibleMembers[1]}
-              positionClass="top-5 left-5"
-            />
-          )}
+      <div className="flex justify-start gap-10.5">
+        <div className="relative h-15 w-15">
+          <MemberAvatar
+            member={visibleMembers[0]}
+            positionClass="top-0 left-0"
+          />
+          <MemberAvatar
+            member={visibleMembers[1]}
+            positionClass="top-5 left-5"
+          />
         </div>
 
-        <div className="members-name flex flex-col h-full flex-1">
-          {visibleMembers.map((member, index) => (
-            <MemberName key={index} member={member} />
+        <div className="flex h-full flex-1 flex-col">
+          {visibleMembers.map((member) => (
+            <MemberName key={member.name} member={member} />
           ))}
         </div>
       </div>
 
-      <div className="count flex justify-end">
-        <div className="people-count text-neutral-300 font-bold">
-          <span>{count ?? members.length} </span>
+      <div className="flex justify-end">
+        <div className="font-bold text-neutral-300">
+          <span>{displayedCount}</span>
           <span> 👤</span>
         </div>
       </div>
     </div>
   );
-}
+};
 
-export default RoomPreviewCard;
+export default memo(RoomPreviewCard);
