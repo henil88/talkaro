@@ -11,8 +11,9 @@ router.post("/api/verify-otp", authController.verifyOtp);
 router.post(
   "/api/activated",
   authMiddlware,
-  upload.single("avtar"),
+  upload.single("avatar"),
   activateController.activate
 );
+router.post("/api/refresh-token",authController.refreshToken)
 
 export default router;
