@@ -1,12 +1,6 @@
 import image01 from "@/assets/image01.jpg";
 import image02 from "@/assets/image02.jpg";
-import {
-  type FC,
-  memo,
-  useCallback,
-  useMemo,
-  useState,
-} from "react";
+import { type FC, memo, useCallback, useMemo, useState } from "react";
 import RoomPreviewCard from "./RoomPreviewCard";
 import DashboardHeader from "./DashboardHeader";
 
@@ -40,7 +34,6 @@ const createDummyRooms = (count: number): Room[] =>
       { name: "Maren Chan", avatar: image01 },
       { name: "Wyatt Callahan", avatar: image02 },
     ],
-    // Stable, deterministic count for potential downstream usage
     count: Math.floor(Math.random() * (index + 1) + 2),
   }));
 
@@ -60,12 +53,8 @@ const RoomList: FC<RoomListProps> = memo(({ rooms }) => {
   return (
     <div className="h-full w-full hide-scrollbar">
       <div className="flex w-full flex-wrap gap-10">
-        {rooms.map((room) => (
-          <RoomPreviewCard
-            key={`${room.title}-${room.count}`}
-            className="flex-1"
-            {...room}
-          />
+        {rooms.map((room, idx) => (
+          <RoomPreviewCard key={idx} className="flex-1" {...room} />
         ))}
       </div>
     </div>

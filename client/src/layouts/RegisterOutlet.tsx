@@ -1,15 +1,23 @@
-import type { ReactNode } from "react";
+import type { PropsWithChildren } from "react";
+import { cn } from "@/lib/utils";
 
-type Props = {
-  children: ReactNode; // Type the children prop as ReactNode
-};
+type RegisterOutletProps = PropsWithChildren<{
+  className?: string;
+}>;
 
-const RegisterOutlet = ({ children }: Props) => {
+const RegisterOutlet = ({ children, className }: RegisterOutletProps) => {
   return (
-    <div className="w-full h-full flex justify-center items-center">
+    <div
+      className={cn(
+        "flex h-full w-full items-center justify-center",
+        className,
+      )}
+    >
       <div className="flex flex-col">{children}</div>
     </div>
   );
 };
+
+RegisterOutlet.displayName = "RegisterOutlet";
 
 export default RegisterOutlet;

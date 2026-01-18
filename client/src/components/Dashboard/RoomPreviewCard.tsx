@@ -1,80 +1,58 @@
 import { memo, type FC } from "react";
 import { cn } from "@/lib/utils";
 
-/* =======================
- * Types
- * ======================= */
-
 interface Member {
   name: string;
   avatar?: string;
 }
 
-interface RoomPreviewCardProps
-  extends React.ComponentPropsWithoutRef<"div"> {
+interface RoomPreviewCardProps extends React.ComponentPropsWithoutRef<"div"> {
   title: string;
   members: readonly Member[];
   count?: number;
 }
 
-/* =======================
- * Constants
- * ======================= */
-
 const MAX_VISIBLE_MEMBERS = 2;
-
-/* =======================
- * Subcomponents
- * ======================= */
 
 interface MemberAvatarProps {
   member: Member;
   positionClass: string;
 }
 
-const MemberAvatar: FC<MemberAvatarProps> = memo(
-  ({ member, positionClass }) => {
-    if (!member.avatar) return null;
+const MemberAvatar: FC<MemberAvatarProps> = ({ member, positionClass }) => {
+  if (!member.avatar) return null;
 
-    return (
-      <div
-        className={cn(
-          "absolute h-9 w-9 overflow-hidden rounded-full",
-          positionClass,
-        )}
-      >
-        <img
-          src={member.avatar}
-          alt={member.name}
-          draggable={false}
-          onContextMenu={(e) => e.preventDefault()}
-          className="h-full w-full rounded-full object-cover"
-        />
-      </div>
-    );
-  },
-);
-
-MemberAvatar.displayName = "MemberAvatar";
+  return (
+    <div
+      className={cn(
+        "absolute h-9 w-9 overflow-hidden rounded-full",
+        positionClass,
+      )}
+    >
+      <img
+        src={member.avatar}
+        alt={member.name}
+        draggable={false}
+        onContextMenu={(e) => e.preventDefault()}
+        className="h-full w-full rounded-full object-cover"
+      />
+    </div>
+  );
+};
 
 interface MemberNameProps {
   member: Member;
 }
 
-const MemberName: FC<MemberNameProps> = memo(({ member }) => {
+const MemberName: FC<MemberNameProps> = ({ member }) => {
   return (
     <div className="text-white font-normal">
       <span>{member.name || "User"} </span>
       <span> 💬</span>
     </div>
   );
-});
+};
 
-MemberName.displayName = "MemberName";
-
-/* =======================
- * Main Component
- * ======================= */
 const RoomPreviewCard: FC<RoomPreviewCardProps> = ({
   title,
   members,
@@ -93,9 +71,7 @@ const RoomPreviewCard: FC<RoomPreviewCardProps> = ({
         className,
       )}
     >
-      <div className="mb-2.5 text-base font-semibold text-white">
-        {title}
-      </div>
+      <div className="mb-2.5 text-base font-semibold text-white">{title}</div>
 
       <div className="flex justify-start gap-10.5">
         <div className="relative h-15 w-15">

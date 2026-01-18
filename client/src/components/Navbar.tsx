@@ -34,7 +34,7 @@ const Navbar = (): JSX.Element => {
 
   return (
     <nav
-      className="flex w-full shrink-0 items-center justify-between py-4"
+      className="flex w-full shrink-0 items-center justify-between py-4 md:py-6 border-b-2 border-neutral-800"
       role="navigation"
       aria-label="Main navigation"
     >
@@ -51,7 +51,7 @@ const Navbar = (): JSX.Element => {
         <button
           type="button"
           onClick={navigateToProfile}
-          className="flex items-center gap-5"
+          className="flex items-center gap-5 cursor-pointer"
           aria-label="Go to profile"
         >
           <span className="text-lg md:text-xl">{user.name}</span>

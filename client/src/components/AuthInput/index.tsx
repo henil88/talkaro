@@ -13,7 +13,7 @@ const AuthInput: React.FC<Props> = (props) => {
   const { option, input, setInput, submit, selectOption } = useAuthInput(props);
 
   return (
-    <div>
+    <div className="w-80 md:w-full">
       <div className="flex justify-end gap-3.5">
         <OptionButton
           optionName="phone"
