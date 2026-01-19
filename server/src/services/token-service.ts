@@ -1,7 +1,7 @@
 import jwt from "jsonwebtoken";
 import tokenModel from "../models/token-model";
 import { JwtUserPayload } from "../types/auth-token";
-const accesTokenScreat = process.env.ACCESS_TOKEN_SCREAT as string;
+const accessTokenScreat = process.env.ACCESS_TOKEN_SCREAT as string;
 const refreshTokenScreat = process.env.REFRESH_TOKEN_SCREAT as string;
 
 // export interface JwtPayload {
@@ -10,13 +10,13 @@ const refreshTokenScreat = process.env.REFRESH_TOKEN_SCREAT as string;
 // }
 class tokenService {
   ganrateToken(payload: JwtUserPayload) {
-    const accesToken = jwt.sign(payload, accesTokenScreat, {
+    const accessToken = jwt.sign(payload, accessTokenScreat, {
       expiresIn: "1h",
     });
     const refreshToken = jwt.sign(payload, refreshTokenScreat, {
       expiresIn: "30d",
     });
-    return { accesToken, refreshToken };
+    return { accessToken, refreshToken };
   }
 
   async storeRefreshToken(token: string, userId: string) {
@@ -38,8 +38,8 @@ class tokenService {
     return await tokenModel.findOne({ userId: userId, token: token });
   }
 
-  verifyAccesToken(token: string) {
-    return jwt.verify(token, accesTokenScreat) as JwtUserPayload;
+  verifyAccessToken(token: string) {
+    return jwt.verify(token, accessTokenScreat) as JwtUserPayload;
   }
 
   verifyRefreshToken(token: string) {

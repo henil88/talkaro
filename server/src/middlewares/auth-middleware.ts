@@ -5,34 +5,39 @@ import { JwtUserPayload } from "../types/auth-token";
 export interface AuthRequest extends Request {
   user: JwtUserPayload;
 }
-const authMiddlware = async (
+
+const authMiddleware = async (
   req: Request,
   res: Response,
   next: NextFunction,
 ) => {
   try {
     const authHeader = req.headers.authorization;
-    const accesToken = authHeader && authHeader.split(" ")[1];
+    const accessToken = authHeader && authHeader.split(" ")[1] || false;
 
-    if (!accesToken) {
-      throw new Error();
+    if (!accessToken) {
+      return res.status(401).json({
+        message: "Token is required",
+      });
     }
 
-    const userData = await tokenService.verifyAccesToken(accesToken);
+    const userData = tokenService.verifyAccessToken(accessToken);
 
     if (!userData) {
-      throw new Error();
+      return res.status(401).json({
+        message: "Invalid Token",
+      });
     }
 
     (req as AuthRequest).user = userData;
-    console.log(userData);
 
     next();
   } catch (err) {
-    res.status(401).json({
-      message: "Invalid Token",
+    console.error(err);  // Log the error for debugging
+    return res.status(401).json({
+      message: "Unauthorized",
     });
   }
 };
 
-export default authMiddlware;
+export default authMiddleware;

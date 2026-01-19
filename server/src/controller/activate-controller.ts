@@ -1,7 +1,7 @@
 import { Jimp } from "jimp";
 import { RequestHandler } from "express";
 import path from "path";
-import { AuthRequest } from "../middlewares/auth-middlware";
+import { AuthRequest } from "../middlewares/auth-middleware";
 import userService from "../services/user-service";
 import UserDto from "../dtos/userDto";
 
