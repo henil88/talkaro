@@ -1,13 +1,14 @@
 import { NextFunction, Request, Response } from "express";
-import tokenService, { JwtPayload } from "../services/token-service";
+import tokenService from "../services/token-service";
+import { JwtUserPayload } from "../types/auth-token";
 
 export interface AuthRequest extends Request {
-  user: JwtPayload;
+  user: JwtUserPayload;
 }
 const authMiddlware = async (
   req: Request,
   res: Response,
-  next: NextFunction
+  next: NextFunction,
 ) => {
   try {
     const authHeader = req.headers.authorization;

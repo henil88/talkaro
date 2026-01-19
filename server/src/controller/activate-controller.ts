@@ -1,5 +1,5 @@
 import { Jimp } from "jimp";
-import { Request, RequestHandler, Response } from "express";
+import { RequestHandler } from "express";
 import path from "path";
 import { AuthRequest } from "../middlewares/auth-middlware";
 import userService from "../services/user-service";
@@ -8,20 +8,20 @@ import UserDto from "../dtos/userDto";
 class ActivateController {
   public activate: RequestHandler = async (req, res) => {
     const { name } = req.body;
-    const avtar = req.file;
-    if (!name || !avtar) {
+    const avatar = req.file;
+    if (!name || !avatar) {
       return res.status(400).json({
-        message: "all filed are requred",
+        message: "all filed are required",
       });
     }
 
     const imagepath = `${Date.now()}-${Math.round(Math.random() * 1e9)}.png`;
-    const imgBuffer = avtar?.buffer;
-    avtar.originalname = imagepath;
+    const imgBuffer = avatar?.buffer;
+    avatar.originalname = imagepath;
 
     try {
-      const resizeAvtar = await Jimp.read(imgBuffer);
-      resizeAvtar
+      const resizeAvatar = await Jimp.read(imgBuffer);
+      resizeAvatar
         .resize({ w: 150 })
         .write(
           path.resolve(
@@ -50,7 +50,7 @@ class ActivateController {
 
       user.name = name;
       user.activated = true;
-      user.avtar = imagepath;
+      user.avatar = `/storage/${imagepath}`;
       user.save();
 
       res.status(200).json({
