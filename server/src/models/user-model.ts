@@ -3,7 +3,7 @@ import mongoose, { HydratedDocument } from "mongoose";
 interface IUSER {
   phone: string;
   name: string;
-  avtar: string;
+  avatar: string;
   activated: boolean;
   createdAt: Date;
 }
@@ -20,7 +20,7 @@ const userSchema = new mongoose.Schema<UserDocument>(
       type: String,
       require: false,
     },
-    avtar: {
+    avatar: {
       type: String,
       require: false,
     },
