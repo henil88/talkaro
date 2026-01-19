@@ -1,4 +1,4 @@
-import UserModel from "../models/user-model";
+import UserModel, { UserDocument } from "../models/user-model";
 
 interface CreateUserDto {
   phone: string;
@@ -11,6 +11,10 @@ class userService {
   async createUser(data: CreateUserDto) {
     const user = await UserModel.create(data);
     return user;
+  }
+
+  async findById(id: string) {
+    return await UserModel.findById<UserDocument>(id);
   }
 
   async findUser(filter: FindUserDto) {

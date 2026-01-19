@@ -6,7 +6,6 @@ import tokenService from "../services/token-service";
 import UserDto from "../dtos/userDto";
 import { UserDocument } from "../models/user-model";
 import { JwtUserPayload } from "../types/auth-token";
-import { Message } from "twilio/lib/twiml/MessagingResponse";
 
 class AuthController {
   //send-otp-function
@@ -94,7 +93,7 @@ class AuthController {
       });
     }
 
-    const { accesToken, refreshToken } = tokenService.ganrateToken({
+    const { accessToken, refreshToken } = tokenService.ganrateToken({
       _id: user._id.toString(),
       activated: false,
     });
@@ -109,7 +108,7 @@ class AuthController {
     const userDto = new UserDto(user);
     res.json({
       user: userDto,
-      accesToken,
+      accessToken,
     });
   }
 
@@ -142,7 +141,7 @@ class AuthController {
         });
       }
 
-      const { refreshToken, accesToken } = tokenService.ganrateToken({
+      const { refreshToken, accessToken } = tokenService.ganrateToken({
         _id: userData._id,
       });
 
@@ -161,11 +160,46 @@ class AuthController {
       const userDto = new UserDto(user);
       res.json({
         user: userDto,
-        accesToken,
+        accessToken,
       });
     } catch (err) {
       res.status(500).json({
         message: "internal server error",
+      });
+    }
+  }
+
+  async UserDetails(req: Request, res: Response) {
+    const user = (req as any).user as { _id: string };
+
+    if (!user) {
+      return res.status(404).json({
+        success: false,
+        message: "User not found",
+      });
+    }
+
+    try {
+      const userData = await userService.findById(user._id);
+
+      if (!userData) {
+        return res.status(404).json({
+          success: false,
+          message: "User not found in the database",
+        });
+      }
+
+      return res.status(200).json({
+        success: true,
+        message: "User information retrieved successfully",
+        user: userData,
+        isActivated: userData.activated,
+      });
+    } catch (error) {
+      console.error(error);
+      return res.status(500).json({
+        success: false,
+        message: "Internal server error",
       });
     }
   }
