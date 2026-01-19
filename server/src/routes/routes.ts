@@ -9,7 +9,7 @@ const router = Router();
 router.post("/api/send-otp", authController.sendOtp);
 router.post("/api/verify-otp", authController.verifyOtp);
 router.post(
-  "/api/activated",
+  "/api/activate",
   authMiddleware,
   upload.single("avatar"),
   activateController.activate
