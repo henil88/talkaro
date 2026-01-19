@@ -20,8 +20,8 @@ class ActivateController {
     avatar.originalname = imagepath;
 
     try {
-      const resizeAvtar = await Jimp.read(imgBuffer);
-      resizeAvtar
+      const resizeAvatar = await Jimp.read(imgBuffer);
+      resizeAvatar
         .resize({ w: 150 })
         .write(
           path.resolve(
@@ -50,7 +50,7 @@ class ActivateController {
 
       user.name = name;
       user.activated = true;
-      user.avtar = `/storage/${imagepath}`;
+      user.avatar = `/storage/${imagepath}`;
       user.save();
 
       res.status(200).json({
