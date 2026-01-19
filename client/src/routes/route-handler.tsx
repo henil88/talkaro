@@ -5,9 +5,10 @@ import Home from "@/pages/Home";
 import { protectedLoader } from "@/loaders/protectedLoader";
 import { signupProtectedLoader } from "@/loaders/semiProtectedLoader";
 import CenteredCardSkeleton from "@/components/skeletons/CenteredCardSkeleton";
-import Dashboard from "@/components/Dashboard";
 import HydrateFallbackDashboard from "@/components/Dashboard/HydrateFallback";
+import Profile from "@/components/Profile";
 
+const Dashboard = lazy(() => import("@/components/Dashboard"));
 const AuthFlow = lazy(() => import("@/pages/AuthFlow"));
 const SignupDetails = lazy(() => import("@/pages/SignupDetails"));
 
@@ -33,6 +34,11 @@ const router = createBrowserRouter([
         loader: protectedLoader(),
         HydrateFallback: HydrateFallbackDashboard,
         Component: Dashboard,
+      },
+      {
+        path: "/profile",
+        loader: protectedLoader(),
+        Component: Profile,
       },
     ],
   },
