@@ -169,6 +169,17 @@ class AuthController {
       });
     }
   }
+
+  async logOut(req: Request, res: Response) {
+    const { refreshToken } = req.cookies;
+    await tokenService.DeleteRefreshToken(refreshToken);
+
+    res.clearCookie("refreshToken");
+
+    res.status(200).json({
+      user: null,
+    });
+  }
 }
 
 export default new AuthController();

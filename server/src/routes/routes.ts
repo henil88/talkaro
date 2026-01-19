@@ -15,5 +15,6 @@ router.post(
   activateController.activate
 );
 router.post("/api/refresh-token",authController.refreshToken)
+router.post("/api/logout",authMiddlware,authController.logOut)
 
 export default router;
