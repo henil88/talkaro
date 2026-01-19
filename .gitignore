@@ -22,3 +22,7 @@ Thumbs.db
 
 # Turborepo-specific ignores (if applicable)
 .turbo/
+
+# temporary files and folders and logs
+**/temp/*
+**/*.log

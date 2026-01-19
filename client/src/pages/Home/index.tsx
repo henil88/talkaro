@@ -1,8 +1,8 @@
-import Button from "../../components/Button";
-import { useNavigate } from "react-router-dom";
+import Button from "@/components/Button";
+import useAuthz from "@/hooks/useAuthz";
 
 const Home = () => {
-  const navigate = useNavigate();
+  const { handleClick } = useAuthz();
 
   return (
     <div className="w-full h-full flex justify-center items-center">
@@ -23,7 +23,7 @@ const Home = () => {
         </div>
 
         <div className="w-full">
-          <Button onClick={() => navigate("/signup")}>Get Your Username</Button>
+          <Button onClick={handleClick}>Welcome Aboard</Button>
         </div>
       </div>
     </div>

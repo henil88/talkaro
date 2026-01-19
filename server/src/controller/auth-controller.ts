@@ -214,6 +214,74 @@ class AuthController {
       user: null,
     });
   }
+
+  async refreshToken(req: Request, res: Response) {
+    const { refreshToken: refreshTokenFromCookie } = req.cookies;
+    let userData: JwtUserPayload | null;
+    try {
+      userData = tokenService.verifyRefreshToken(refreshTokenFromCookie);
+      if (!userData || typeof userData === null) {
+        return res.status(404).json({
+          message: "userdata is missing",
+        });
+      }
+      const token = await tokenService.findRefreshToken(
+        userData._id,
+        refreshTokenFromCookie,
+      );
+
+      if (!token) {
+        res.status(401).json({
+          message: "invalid token",
+        });
+      }
+
+      const user = await userService.findUser({ _id: userData._id });
+
+      if (!user) {
+        return res.status(401).json({
+          message: "user not found",
+        });
+      }
+
+      const { refreshToken, accesToken } = tokenService.ganrateToken({
+        _id: userData._id,
+      });
+
+      try {
+        await tokenService.updateRefreshToken(refreshToken, userData._id);
+      } catch (err) {
+        res.status(401).json({
+          Message: "failed to update token in db ",
+        });
+      }
+      res.cookie("refreshToken", refreshToken, {
+        maxAge: 1000 * 60 * 60 * 24 * 30,
+        httpOnly: true,
+      });
+
+      const userDto = new UserDto(user);
+      res.json({
+        user: userDto,
+        accesToken,
+      });
+    } catch (err) {
+      res.status(500).json({
+        message: "internal server error",
+      });
+    }
+  }
+
+  async logOut(req: Request, res: Response) {
+    const { refreshToken } = req.cookies;
+    await tokenService.DeleteRefreshToken(refreshToken);
+
+    res.clearCookie("refreshToken");
+
+    res.status(200).json({
+      user: null,
+    });
+  }
 }
 
 export default new AuthController();

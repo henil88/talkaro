@@ -1,0 +1,209 @@
+openapi: "3.1.0"
+info:
+  title: Authentication API
+  version: "1.0.0"
+servers:
+  - url: http://server:3000
+
+paths:
+  /api/refresh:
+    post:
+      summary: Rotate refresh token and issue new access token
+      description: Accepts httpOnly refresh token cookie and returns new rotated refresh + access token.
+      tags: [Auth]
+      security:
+        - RefreshCookieAuth: []
+      responses:
+        "200":
+          description: Successful token refresh
+          headers:
+            Set-Cookie:
+              $ref: "#/components/headers/SetRefreshTokenCookie"
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/AuthTokenResponse"
+
+  /api/verify-otp:
+    post:
+      summary: Verify OTP and issue access/refresh tokens
+      tags: [Auth]
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/VerifyOtpRequest"
+      responses:
+        "200":
+          description: OTP verified successfully
+          headers:
+            Set-Cookie:
+              $ref: "#/components/headers/SetRefreshTokenCookie"
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/AuthTokenResponse"
+
+  /api/me:
+    get:
+      summary: Get authenticated user profile
+      tags: [User]
+      security:
+        - BearerAuth: []
+      responses:
+        "200":
+          description: User information
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/UserProfileResponse"
+
+  /api/activate:
+    post:
+      summary: Activate user account with details
+      tags: [User]
+      security:
+        - BearerAuth: []
+      requestBody:
+        required: true
+        content:
+          multipart/form-data:
+            schema:
+              $ref: "#/components/schemas/UserDetailsRequest"
+      responses:
+        "200":
+          description: User activated successfully
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/UserProfileResponse"
+
+  /api/send-otp:
+    post:
+      summary: Send OTP to email or phone
+      tags: [Auth]
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/SendOtpRequest"
+      responses:
+        "200":
+          description: OTP sent
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/BasicResponse"
+
+components:
+  securitySchemes:
+    BearerAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
+    RefreshCookieAuth:
+      type: apiKey
+      in: cookie
+      name: refresh-token
+
+  headers:
+    SetRefreshTokenCookie:
+      description: Rotated refresh token cookie (httpOnly)
+      schema:
+        type: string
+      example: "refresh-token=abc123; HttpOnly; Path=/; Secure; SameSite=Strict"
+
+  schemas:
+    BasicResponse:
+      type: object
+      description: Basic success response
+      properties:
+        success:
+          type: boolean
+        message:
+          type: string
+      required:
+        - success
+        - message
+
+    AuthTokenResponse:
+      type: object
+      description: Token response after authentication steps
+      properties:
+        success:
+          type: boolean
+        message:
+          type: string
+        token:
+          type: string
+          description: Access token
+        isAuthorized:
+          type: boolean
+      required:
+        - success
+        - message
+        - token
+        - isAuthorized
+
+    VerifyOtpRequest:
+      type: object
+      description: Verify OTP for identifier
+      properties:
+        identifier:
+          type: string
+          description: Email or phone number
+        otp:
+          type: string
+          description: "4-digit OTP"
+          pattern: "^[0-9]{4}$"
+      required:
+        - identifier
+        - otp
+
+    UserProfileResponse:
+      type: object
+      description: User data returned after authentication or activation
+      properties:
+        success:
+          type: boolean
+        message:
+          type: string
+        user:
+          type: object
+          description: User data object
+        isActivated:
+          type: boolean
+      required:
+        - success
+        - message
+        - user
+        - isActivated
+
+    UserDetailsRequest:
+      type: object
+      description: User details for account activation
+      properties:
+        username:
+          type: string
+        avatar:
+          type: string
+          format: binary
+          description: User avatar image
+      required:
+        - username
+        - avatar
+
+    SendOtpRequest:
+      type: object
+      description: Request to send OTP to email or phone
+      properties:
+        email:
+          type: string
+          format: email
+        phone:
+          type: string
+      oneOf:
+        - required: ["email"]
+        - required: ["phone"]
