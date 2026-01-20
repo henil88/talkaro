@@ -1,29 +1,27 @@
 import mongoose from "mongoose";
 
-const otpSchema = new mongoose.Schema({
-  identifier: {
-    type: String,
-    required: true,
+const otpSchema = new mongoose.Schema(
+  {
+    identifier: {
+      type: String,
+      required: true,
+    },
+    otpHash: {
+      type: String,
+      required: true,
+    },
+    isUsed: {
+      type: Boolean,
+      default: false,
+    },
+    expiresAt: {
+      type: Date,
+      required: true,
+      index: { expires: 0 },
+    },
   },
-  otpHash: {
-    type: String,
-    required: true,
-  },
-  isUsed: {
-    type: Boolean,
-    default: false,
-  },
-  expiresAt: {
-    type: Date,
-    required: true,
-    index: { expires: 0 },
-  },
-
-  createdAt: {
-    type: Date,
-    default: Date.now,
-  },
-});
+  { timestamps: true },
+);
 
 const otpModel = mongoose.model("otp", otpSchema);
 
