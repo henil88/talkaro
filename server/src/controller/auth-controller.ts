@@ -192,7 +192,7 @@ class AuthController {
       return res.status(200).json({
         success: true,
         message: "User information retrieved successfully",
-        user: userData,
+        user:userData,
         isActivated: userData.activated,
       });
     } catch (error) {
