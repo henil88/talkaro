@@ -1,5 +1,6 @@
 import crypto from "crypto";
 import twilio from "twilio";
+import hashService from "./hash-service";
 
 const accoundSid = process.env.ACCOUNT_SID;
 const smsAuth = process.env.AUTH_TOKEN;
@@ -17,15 +18,18 @@ class Otpservice {
 
   //send otp by sms
   async sendBySms(phone: string, otp: number) {
-    return await client.messages.create({
-      to: phone,
-      from: smsNum,
-      body: `Thank You for join Talkaro Your OTP is ${otp}`,
-    });
+    // return await client.messages.create({
+    //   to: phone,
+    //   from: smsNum,
+    //   body: `Thank You for join Talkaro Your OTP is ${otp}`,
+    // });
   }
 
   //veryfy sended otp
-  verifyOtp() {}
+  verifyOtp(hashed: string, data: string) {
+    const computedHas = hashService.hashOtp(data);
+    return hashed === computedHas;
+  }
 }
 
 export default new Otpservice();

@@ -59,7 +59,7 @@ paths:
               schema:
                 $ref: "#/components/schemas/UserProfileResponse"
 
-  /api/user-details:
+  /api/activate:
     post:
       summary: Activate user account with details
       tags: [User]
