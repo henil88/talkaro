@@ -22,19 +22,18 @@ class AuthController {
     const otp = await otpService.genrateOtp();
     console.log(otp);
 
-    //crete data with expireTime
-    const ttl = 1000 * 60 * 1;
-    const expire = Date.now() + ttl;
-    const data = `${phone}.${otp}.${expire}`;
-
     //crete hash
-    const hash = hashService.hashOtp(data);
+    const hash = hashService.hashOtp(otp.toString());
+
+    //save otp to db in hash form
+
+    await otpService.storeOtpToDb(hash, phone);
 
     //send otp
+
     try {
       await otpService.sendBySms(phone, otp);
       res.status(200).json({
-        Hash: `${hash}.${expire}`,
         phone: phone,
       });
     } catch (error) {
@@ -45,31 +44,25 @@ class AuthController {
   }
 
   async verifyOtp(req: Request, res: Response) {
-    const { otp, hash, phone } = req.body;
+    const { otp, phone } = req.body;
 
-    if (!otp || !hash || !phone) {
+    if (!otp || !phone) {
       res.status(400).json({
         message: "all filed are required",
       });
     }
 
-    const [hashedOtp, expireStr] = hash.split(".");
-    // console.log(hashedOtp)
+    // crete otp Hash
 
-    const expire: number = Number(expireStr);
+    const otpHash = hashService.hashOtp(otp);
 
-    if (Date.now() > expire) {
-      return res.status(400).json({
-        message: "otp expire",
-      });
-    }
+    //verify otp in db
 
-    const data = `${phone}.${otp}.${expire}`;
-    const isValid = otpService.verifyOtp(hashedOtp, data);
-
-    if (!isValid) {
-      return res.status(400).json({
-        message: "otp is invalid",
+    try {
+      await otpService.verifyOtp(otpHash, phone);
+    } catch (err: any) {
+      res.status(400).json({
+        message: err.message,
       });
     }
 
@@ -107,8 +100,9 @@ class AuthController {
 
     const userDto = new UserDto(user);
     res.json({
-      user: userDto,
+      success: true,
       accessToken,
+      isAuthorized: true,
     });
   }
 
@@ -192,7 +186,7 @@ class AuthController {
       return res.status(200).json({
         success: true,
         message: "User information retrieved successfully",
-        user:userData,
+        user: new UserDto(userData),
         isActivated: userData.activated,
       });
     } catch (error) {
@@ -214,8 +208,6 @@ class AuthController {
       user: null,
     });
   }
-
-
 }
 
 export default new AuthController();

@@ -4,6 +4,7 @@ interface IUSER {
   phone: string;
   name: string;
   avatar: string;
+  otp: string;
   activated: boolean;
   createdAt: Date;
 }
@@ -28,10 +29,14 @@ const userSchema = new mongoose.Schema<UserDocument>(
       type: Boolean,
       default: false,
     },
+    otp: {
+      type: String,
+      required: false,
+    },
   },
   {
     timestamps: true,
-  }
+  },
 );
 
 const userModel = mongoose.model<UserDocument>("user", userSchema);
