@@ -37,6 +37,7 @@ const router = createBrowserRouter([
       },
       {
         path: "/profile",
+        HydrateFallback: () => <div />,
         loader: protectedLoader(),
         Component: Profile,
       },

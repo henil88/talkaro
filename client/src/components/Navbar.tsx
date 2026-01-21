@@ -4,6 +4,7 @@ import { useAppSelector } from "@/store/hooks";
 
 const ROUTES = {
   HOME: "/",
+  DASHBOARD: "/app",
   PROFILE: "/profile",
 } as const;
 
@@ -24,11 +25,12 @@ const Navbar = (): JSX.Element => {
   const navigate = useNavigate();
   const { isActivated, user } = useNavbarState();
 
-  const navigateToHome = useCallback((): void => {
+  const navigateToHome = useCallback(() => {
+    if (isActivated) return navigate(ROUTES.DASHBOARD);
     navigate(ROUTES.HOME);
-  }, [navigate]);
+  }, [isActivated, navigate]);
 
-  const navigateToProfile = useCallback((): void => {
+  const navigateToProfile = useCallback(() => {
     navigate(ROUTES.PROFILE);
   }, [navigate]);
 
