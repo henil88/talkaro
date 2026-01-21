@@ -3,6 +3,7 @@ import authController from "../controller/auth-controller";
 import activateController from "../controller/activate-controller";
 import authMiddleware from "../middlewares/auth-middleware";
 import { upload } from "../services/image-upload-service";
+import roomsController from "../controller/rooms-controller";
 
 const router = Router();
 
@@ -18,5 +19,6 @@ router.post(
 );
 router.post("/api/refresh", authController.refreshToken);
 router.get("/api/logout", authMiddleware, authController.logOut);
+router.post("/api/rooms", authMiddleware, roomsController.create);
 
 export default router;
