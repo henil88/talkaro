@@ -60,12 +60,11 @@ class AuthController {
 
     try {
       await otpService.verifyOtp(otpHash, phone);
-    } catch (err:any) {
+    } catch (err: any) {
       res.status(400).json({
-        message:err.message,
+        message: err.message,
       });
     }
-
 
     let user: UserDocument | null = null;
 
@@ -101,8 +100,9 @@ class AuthController {
 
     const userDto = new UserDto(user);
     res.json({
-      user: userDto,
+      success: true,
       accessToken,
+      isAuthorized: true,
     });
   }
 
