@@ -23,9 +23,9 @@ type ResponseType = {
 
 export const sendDetails = async (details: ProfileDetails) => {
   const { data } = await api.post<ResponseType>(
-    "/api/user-details",
+    "/api/activate",
     formatFormData(details),
-    { headers: { "Content-Type": "multipart/form-data" } }
+    { headers: { "Content-Type": "multipart/form-data" } },
   );
 
   if (data.success) store.dispatch(setUser(data));

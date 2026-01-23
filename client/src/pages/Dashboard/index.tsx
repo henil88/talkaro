@@ -3,6 +3,8 @@ import image02 from "@/assets/image02.jpg";
 import { type FC, memo, useCallback, useMemo, useState } from "react";
 import RoomPreviewCard from "@/components/Dashboard/RoomPreviewCard";
 import DashboardHeader from "@/components/Dashboard/DashboardHeader";
+import useOverlay from "@/hooks/useOverlay";
+import OverlayPanel from "@/components/Dashboard/OverlayPanel";
 
 /* =======================
  * Types
@@ -61,21 +63,16 @@ const RoomList: FC<RoomListProps> = memo(({ rooms }) => {
   );
 });
 
-RoomList.displayName = "RoomList";
-
 /* =======================
  * Page
  * ======================= */
 
 function Dashboard() {
   const [searchValue, setSearchValue] = useState<string>("");
-
-  // Dummy data preserved intentionally
+  const { panel, open, close } = useOverlay();
   const rooms = useRooms(100);
 
-  const handleStartRoom = useCallback((): void => {
-    // Intentionally left empty to preserve existing behavior
-  }, []);
+  const handleStartRoom = useCallback(() => open("room"), [open]);
 
   const handleSearchChange = useCallback((value: string): void => {
     setSearchValue(value);
@@ -89,6 +86,7 @@ function Dashboard() {
         onStartRoom={handleStartRoom}
       />
       <RoomList rooms={rooms} />
+      {panel === "room" && <OverlayPanel onClose={close} />}
     </section>
   );
 }

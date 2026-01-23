@@ -8,7 +8,7 @@ import CenteredCardSkeleton from "@/components/skeletons/CenteredCardSkeleton";
 import HydrateFallbackDashboard from "@/components/Dashboard/HydrateFallback";
 import Profile from "@/components/Profile";
 
-const Dashboard = lazy(() => import("@/components/Dashboard"));
+const Dashboard = lazy(() => import("@/pages/Dashboard"));
 const AuthFlow = lazy(() => import("@/pages/AuthFlow"));
 const SignupDetails = lazy(() => import("@/pages/SignupDetails"));
 
