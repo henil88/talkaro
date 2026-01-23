@@ -26,9 +26,13 @@ class AuthController {
     const hash = hashService.hashOtp(otp.toString());
 
     //save otp to db in hash form
-
-    await otpService.storeOtpToDb(hash, phone);
-
+    const isOtpExist = await otpService.otpExist(phone);
+    if (isOtpExist === null) {
+      await otpService.storeOtpToDb(hash, phone);
+    } else {
+      await otpService.deleteOtp(isOtpExist._id);
+      await otpService.storeOtpToDb(hash, phone);
+    }
     //send otp
 
     try {
@@ -61,7 +65,7 @@ class AuthController {
     try {
       await otpService.verifyOtp(otpHash, phone);
     } catch (err: any) {
-      res.status(400).json({
+      return res.status(400).json({
         message: err.message,
       });
     }

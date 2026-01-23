@@ -2,6 +2,7 @@ import crypto from "crypto";
 import twilio from "twilio";
 import hashService from "./hash-service";
 import otpModel from "../models/otp-model";
+import mongoose from "mongoose";
 
 const accoundSid = process.env.ACCOUNT_SID;
 const smsAuth = process.env.AUTH_TOKEN;
@@ -26,6 +27,10 @@ class Otpservice {
     // });
   }
 
+  async otpExist(phone: string) {
+    return await otpModel.exists({ identifier: phone });
+  }
+
   //veryfy sended otp
   async verifyOtp(userOtp: string, identifier: string) {
     const otpDoc = await otpModel.findOne({
@@ -35,25 +40,17 @@ class Otpservice {
     if (!otpDoc) {
       throw new Error("Invalid or expired OTP");
     }
-
-    if (otpDoc.isUsed) {
-      throw new Error("OTP already used");
-    }
-
     if (otpDoc.expiresAt < new Date()) {
       await otpModel.deleteOne({ _id: otpDoc._id });
       throw new Error("OTP expired, please request new one");
     }
 
     const isMatchOtp = hashService.compareHash(userOtp, otpDoc.otpHash);
-
     if (!isMatchOtp) {
       throw new Error("Invalid otp");
     }
 
-    if (otpDoc.isUsed) {
-      await otpModel.deleteOne({ _id: otpDoc._id });
-    }
+    await otpModel.deleteOne({ _id: otpDoc._id });
   }
 
   // store otp to db
@@ -64,6 +61,10 @@ class Otpservice {
       identifier: identifier,
       expiresAt: expireAt,
     });
+  }
+
+  async deleteOtp(id: mongoose.Types.ObjectId) {
+    await otpModel.findOneAndDelete({ _id: id });
   }
 }
 

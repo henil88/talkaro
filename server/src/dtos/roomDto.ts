@@ -1,13 +1,5 @@
 import { Types } from "mongoose";
-
-interface IRoomInput {
-  _id: Types.ObjectId | string;
-  topic: string;
-  roomType: string;
-  ownerId: Types.ObjectId | string;
-  speakers?: (Types.ObjectId | string)[] | null;
-  createdAt: Date;
-}
+import { IRoomInput } from "../models/rooms-model";
 
 class RoomDto {
   _id: string;
@@ -17,7 +9,7 @@ class RoomDto {
   speakers: string[];
   createdAt: Date;
 
-  constructor(room: IRoomInput) {
+  constructor(room:IRoomInput) {
     ((this._id = room._id.toString()),
       (this.topic = room.topic),
       (this.roomType = room.roomType),

@@ -25,7 +25,7 @@ const userSchema = new mongoose.Schema<UserDocument>(
       type: String,
       require: false,
       get: (avatar: string) => {
-        if (avatar) {
+        if (avatar && process.env.BASE_URL != undefined) {
           return `${process.env.BASE_URL}${avatar}`;
         }
         return avatar;
