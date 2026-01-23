@@ -59,7 +59,7 @@ paths:
               schema:
                 $ref: "#/components/schemas/UserProfileResponse"
 
-  /api/activate:
+  /api/user-details:
     post:
       summary: Activate user account with details
       tags: [User]
@@ -96,6 +96,26 @@ paths:
             application/json:
               schema:
                 $ref: "#/components/schemas/BasicResponse"
+
+  /api/rooms:
+    post:
+      summary: Create a new room
+      tags: [Room]
+      security:
+        - BearerAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/CreateRoomRequest"
+      responses:
+        "200":
+          description: Room created successfully
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/RoomResponse"
 
 components:
   securitySchemes:
@@ -207,3 +227,57 @@ components:
       oneOf:
         - required: ["email"]
         - required: ["phone"]
+
+    CreateRoomRequest:
+      type: object
+      description: Request body to create a room
+      properties:
+        topic:
+          type: string
+        roomType:
+          type: string
+      required:
+        - topic
+        - roomType
+
+    RoomResponse:
+      type: object
+      description: Response after creating a room
+      properties:
+        success:
+          type: boolean
+        message:
+          type: string
+        room:
+          $ref: "#/components/schemas/Room"
+      required:
+        - success
+        - message
+        - room
+
+    Room:
+      type: object
+      description: Room entity
+      properties:
+        _id:
+          type: string
+        topic:
+          type: string
+        roomType:
+          type: string
+        ownerId:
+          type: string
+        speakers:
+          type: array
+          items:
+            type: string
+        createdAt:
+          type: string
+          format: date-time
+      required:
+        - _id
+        - topic
+        - roomType
+        - ownerId
+        - speakers
+        - createdAt

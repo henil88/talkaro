@@ -20,6 +20,12 @@ class RoomController {
 
     res.json(new RoomDto(room));
   }
+  async index(req: Request, res: Response) {
+    const rooms = await roomService.getAllRooms(["social"]);
+    const allRooms = rooms.map((room) => new RoomDto(room));
+    console.log(allRooms);
+    return res.json(allRooms);
+  }
 }
 
 export default new RoomController();

@@ -17,6 +17,15 @@ class RoomService {
     });
     return room;
   }
+
+  async getAllRooms(types: string[]) {
+    const rooms = await roomModel
+      .find({ roomType: { $in: types } })
+      .populate("ownerId")
+      .populate("speakers")
+      .exec();
+    return rooms;
+  }
 }
 
 export default new RoomService();

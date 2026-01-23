@@ -24,6 +24,12 @@ const userSchema = new mongoose.Schema<UserDocument>(
     avatar: {
       type: String,
       require: false,
+      get: (avatar: string) => {
+        if (avatar) {
+          return `${process.env.BASE_URL}${avatar}`;
+        }
+        return avatar;
+      },
     },
     activated: {
       type: Boolean,
@@ -36,6 +42,7 @@ const userSchema = new mongoose.Schema<UserDocument>(
   },
   {
     timestamps: true,
+    toJSON: { getters: true },
   },
 );
 
