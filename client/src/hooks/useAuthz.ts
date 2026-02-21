@@ -1,6 +1,6 @@
 import { useNavigate } from "react-router";
 import { useCallback } from "react";
-import api from "@/lib/axios";
+import api from "@/libs/axios";
 import { checkAuthorization } from "@/utils/authUtils";
 import { toast } from "sonner";
 import { useAppSelector } from "@/store/hooks";

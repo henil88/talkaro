@@ -1,4 +1,4 @@
-import { cn } from "@/lib/utils";
+import { cn } from "@/libs/utils";
 import { Skeleton } from "../ui/skeleton";
 import { memo } from "react";
 
@@ -14,10 +14,7 @@ type RepeatedSkeletonsProps = {
 const MemberAvatarSkeleton = memo(({ className }: WithClassName) => {
   return (
     <Skeleton
-      className={cn(
-        "absolute h-9 w-9 rounded-full bg-neutral-800",
-        className,
-      )}
+      className={cn("absolute h-9 w-9 rounded-full bg-neutral-800", className)}
     />
   );
 });
@@ -52,18 +49,12 @@ const Card = memo(({ className }: WithClassName) => {
       <div className="flex justify-start gap-12">
         <div className="relative h-15 w-15">
           {AVATAR_POSITIONS.map(({ top, left }, index) => (
-            <MemberAvatarSkeleton
-              key={index}
-              className={cn(top, left)}
-            />
+            <MemberAvatarSkeleton key={index} className={cn(top, left)} />
           ))}
         </div>
 
         <div className="flex w-full flex-col justify-around">
-          <RepeatedSkeletons
-            count={2}
-            className="h-4 w-2/3 bg-neutral-800"
-          />
+          <RepeatedSkeletons count={2} className="h-4 w-2/3 bg-neutral-800" />
         </div>
       </div>
 

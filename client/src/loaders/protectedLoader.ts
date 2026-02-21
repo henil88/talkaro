@@ -1,10 +1,10 @@
 import { redirect, type LoaderFunctionArgs } from "react-router-dom";
 import { checkAuthorization } from "@/utils/authUtils";
-import api from "@/lib/axios";
+import api from "@/libs/axios";
 import { store } from "@/store";
 
 export const protectedLoader = (
-  innerLoader?: (args: LoaderFunctionArgs) => Promise<unknown>
+  innerLoader?: (args: LoaderFunctionArgs) => Promise<unknown>,
 ) => {
   return async (args: LoaderFunctionArgs) => {
     const { auth, user } = store.getState();

@@ -6,16 +6,18 @@ import { protectedLoader } from "@/loaders/protectedLoader";
 import { signupProtectedLoader } from "@/loaders/semiProtectedLoader";
 import CenteredCardSkeleton from "@/components/skeletons/CenteredCardSkeleton";
 import HydrateFallbackDashboard from "@/components/Dashboard/HydrateFallback";
-import Profile from "@/components/Profile";
 
 const Dashboard = lazy(() => import("@/pages/Dashboard"));
 const AuthFlow = lazy(() => import("@/pages/AuthFlow"));
 const SignupDetails = lazy(() => import("@/pages/SignupDetails"));
+const Profile = lazy(() => import("@/components/Profile"));
+const Room = lazy(() => import("@/pages/Room"));
 
 const router = createBrowserRouter([
   {
     path: "/",
     Component: Layout,
+    HydrateFallback: () => <div />,
     children: [
       { index: true, Component: Home },
       {
@@ -37,9 +39,14 @@ const router = createBrowserRouter([
       },
       {
         path: "/profile",
-        HydrateFallback: () => <div />,
         loader: protectedLoader(),
         Component: Profile,
+      },
+      {
+        path: "/room/:roomId",
+        // also we need to check if the room even exist or not
+        loader: protectedLoader(),
+        Component: Room,
       },
     ],
   },

@@ -1,5 +1,5 @@
 import type { FC, PropsWithChildren } from "react";
-import { cn } from "@/lib/utils";
+import { cn } from "@/libs/utils";
 
 export interface FormContainerProps {
   className?: string;

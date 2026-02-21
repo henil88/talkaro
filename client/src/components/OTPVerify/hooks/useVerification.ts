@@ -4,7 +4,7 @@ import { verifyOTP } from "@/apis/auth/verifyOTP";
 import { useAppSelector } from "@/store/hooks";
 import { toast } from "sonner";
 import { getUserDetails } from "@/apis/user/getUserDetails";
-import api from "@/lib/axios";
+import api from "@/libs/axios";
 
 export interface VerificationProps {
   back: () => void;

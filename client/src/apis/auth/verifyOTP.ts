@@ -1,5 +1,5 @@
 import type { AxiosError } from "axios";
-import api from "@/lib/axios";
+import api from "@/libs/axios";
 import { setToken } from "@/features/auth/slice";
 import { store } from "@/store";
 
@@ -12,7 +12,8 @@ type RejectedResponse = { message: string };
 type FulfilledResponse = { token: string; isAuthorized: boolean };
 
 export const verifyOTP = async ({ identifier, otp }: Params) => {
-  if (!identifier || !otp) throw new Error("Neither identifier or otp was provided.");
+  if (!identifier || !otp)
+    throw new Error("Neither identifier or otp was provided.");
 
   try {
     const { data } = await api.post<FulfilledResponse>("/api/verify-otp", {

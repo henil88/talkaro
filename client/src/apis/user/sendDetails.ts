@@ -1,4 +1,4 @@
-import api from "@/lib/axios";
+import api from "@/libs/axios";
 import { store } from "@/store";
 import { setUser } from "@/features/user/slice";
 

@@ -1,5 +1,5 @@
 import { memo, type FC } from "react";
-import { cn } from "@/lib/utils";
+import { cn } from "@/libs/utils";
 
 interface Member {
   name: string;

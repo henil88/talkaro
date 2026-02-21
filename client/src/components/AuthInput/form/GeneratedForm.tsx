@@ -4,7 +4,7 @@ import FormContainer from "./FormContainer";
 import InputWithLabel from "./InputWithLabel";
 import Terms from "./Terms";
 import { usePhoneFormat } from "./usePhoneFormat";
-import { cn } from "@/lib/utils";
+import { cn } from "@/libs/utils";
 
 const GeneratedForm = ({
   field,

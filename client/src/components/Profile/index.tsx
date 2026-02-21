@@ -1,6 +1,6 @@
 import { useAuth } from "@/hooks/useAuth";
 import useOverlay from "@/hooks/useOverlay";
-import { cn } from "@/lib/utils";
+import { cn } from "@/libs/utils";
 import { useCallback, useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
