@@ -21,5 +21,6 @@ router.post("/api/refresh", authController.refreshToken);
 router.get("/api/logout", authMiddleware, authController.logOut);
 router.post("/api/rooms", authMiddleware, roomsController.create);
 router.get("/api/rooms", authMiddleware, roomsController.index);
+router.get("/api/verifyroom", authMiddleware, roomsController.verifyRoom);
 
 export default router;

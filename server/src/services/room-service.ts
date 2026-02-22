@@ -26,6 +26,15 @@ class RoomService {
       .exec();
     return rooms;
   }
+
+  async findRoomById(roomId: string): Promise<boolean> {
+    const isAvailable = await roomModel.exists({ _id: roomId });
+    if (isAvailable) {
+      return true;
+    } else {
+      return false;
+    }
+  }
 }
 
 export default new RoomService();
