@@ -1,7 +1,7 @@
-import type { WebRTCSnapshot } from "@/types/storeSnapshot";
 import type { PeerSettingsType } from "@/types/settingsType";
-import { ExternalStore } from "./externalStore"; 
+import type { WebRTCSnapshot } from "@/types/storeSnapshot";
 import { produce } from "immer";
+import { ExternalStore } from "./externalStore";
 
 export class WebRTCStateManager extends ExternalStore<WebRTCSnapshot> {
   // Non-reactive runtime state

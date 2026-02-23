@@ -1,9 +1,9 @@
+import { Toaster } from "@/components/ui/sonner";
+import { router } from "@/routes/route-handler";
 import { Provider } from "react-redux";
 import { RouterProvider } from "react-router";
-import { router } from "@/routes/route-handler";
 import { setupAxiosWithStore } from "./libs/setupAxiosWithStore";
 import { store } from "./store";
-import { Toaster } from "@/components/ui/sonner";
 
 setupAxiosWithStore(store);
 

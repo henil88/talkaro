@@ -29,38 +29,39 @@ export class WebRTCOrchestrator extends WebRTCOutboundEvents {
 
     pc.onicecandidate = (e) => {
       if (e.candidate) {
-        // attach ice candidates to webrtc manager
-        this.onIceCandidate(peerId, e.candidate);
+        this.sendIceCandidate(peerId, e.candidate);
       }
     };
 
     if (isInitiator) {
-      // create offer based on isInitiator
-      this.createOffer(peerId, pc);
+      this.sendOffer(peerId, pc);
     }
 
     return pc;
   }
-  
-  async createOffer(to: string, pc: RTCPeerConnection) {
+
+  async sendOffer(to: string, pc: RTCPeerConnection) {
     const offer = await pc.createOffer();
     await pc.setLocalDescription(offer);
     this.offerHandler?.(to, offer);
   }
-  
-  async createAnswer(to: string, pc: RTCPeerConnection) {
+
+  async sendAnswer(to: string, pc: RTCPeerConnection) {
     const answer = await pc.createAnswer();
     await pc.setLocalDescription(answer);
     this.answerHandler?.(to, answer);
   }
 
-  // Doubt - need to re-check
+  sendIceCandidate(to: string, ice: RTCIceCandidateInit) {
+    this.iceHandler?.(to, ice);
+  }
+
   async handleOffer(from: string, sdp: RTCSessionDescriptionInit) {
     const pc = this.ensurePeer(from);
     await pc.setRemoteDescription(sdp);
     await webrtcManager.flushIce(from);
 
-    this.createAnswer(from, pc);
+    this.sendAnswer(from, pc);
   }
 
   async handleAnswer(from: string, sdp: RTCSessionDescriptionInit) {
@@ -71,17 +72,13 @@ export class WebRTCOrchestrator extends WebRTCOutboundEvents {
     await webrtcManager.flushIce(from);
   }
 
-  handleIce(from: string, ice: RTCIceCandidateInit) {
+  async handleIce(from: string, ice: RTCIceCandidateInit) {
     const pc = webrtcManager.getPeer(from);
     if (!pc || !pc.remoteDescription) {
       webrtcManager.queueIce(from, ice);
       return;
     }
-    pc.addIceCandidate(ice);
-  }
-
-  onIceCandidate(to: string, ice: RTCIceCandidateInit) {
-    this.iceHandler?.(to, ice);
+    await pc.addIceCandidate(ice);
   }
 
   ensurePeer(id: string) {
@@ -89,8 +86,8 @@ export class WebRTCOrchestrator extends WebRTCOutboundEvents {
     if (!pc) pc = this.createPeer(id);
     return pc;
   }
-  
+
   dispose() {
-    
+    // WebRTC Orchestrator dispose method don't have anything to dispose
   }
 }

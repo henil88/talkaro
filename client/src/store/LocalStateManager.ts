@@ -1,15 +1,15 @@
-import type { LocalSnapshot } from "@/types/storeSnapshot";
-import { ExternalStore } from "./externalStore";
-import {
-  io,
-  Socket,
-  type ManagerOptions,
-  type SocketOptions,
-} from "socket.io-client";
 import type { UserSettingsType } from "@/types/settingsType";
+import type { LocalSnapshot } from "@/types/storeSnapshot";
 import { produce } from "immer";
+import {
+    io,
+    Socket,
+    type ManagerOptions,
+    type SocketOptions,
+} from "socket.io-client";
+import { ExternalStore } from "./externalStore";
 
-class LocalStateManager extends ExternalStore<LocalSnapshot> {
+export class LocalStateManager extends ExternalStore<LocalSnapshot> {
   private socketRef: Socket | null = null;
 
   private state: LocalSnapshot = {
@@ -66,6 +66,29 @@ class LocalStateManager extends ExternalStore<LocalSnapshot> {
     const next = produce(this.state, recipe);
     this.state = next;
     this.setSnapshot(next);
+  }
+
+  /* ---------------- Cleanup ---------------- */
+
+  dispose() {
+    if (this.state.localStream) {
+      this.state.localStream.getTracks().forEach((t) => t.stop());
+    }
+
+    if (this.socketRef) {
+      this.socketRef.disconnect();
+      this.socketRef = null;
+    }
+
+    this.state = {
+      localStream: null,
+      userSettings: {
+        muted: true,
+        username: "",
+      },
+    };
+    
+    this.setSnapshot(this.state);
   }
 }
 

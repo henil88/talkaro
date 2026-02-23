@@ -1,11 +1,11 @@
-import { createBrowserRouter } from "react-router";
-import { lazy } from "react";
+import HydrateFallbackDashboard from "@/components/Dashboard/HydrateFallback";
+import CenteredCardSkeleton from "@/components/skeletons/CenteredCardSkeleton";
 import Layout from "@/layouts/Layout";
-import Home from "@/pages/Home";
 import { protectedLoader } from "@/loaders/protectedLoader";
 import { signupProtectedLoader } from "@/loaders/semiProtectedLoader";
-import CenteredCardSkeleton from "@/components/skeletons/CenteredCardSkeleton";
-import HydrateFallbackDashboard from "@/components/Dashboard/HydrateFallback";
+import Home from "@/pages/Home";
+import { lazy } from "react";
+import { createBrowserRouter } from "react-router";
 
 const Dashboard = lazy(() => import("@/pages/Dashboard"));
 const AuthFlow = lazy(() => import("@/pages/AuthFlow"));

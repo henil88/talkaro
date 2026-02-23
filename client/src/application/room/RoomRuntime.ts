@@ -50,7 +50,7 @@ export class RoomRuntime {
   }
 
   private wireEvents() {
-    this.signaling.onPeerJoined((peerId) => {
+    this.signaling.onJoined((peerId) => {
       this.rtc.createPeer(peerId, true);
     });
 
