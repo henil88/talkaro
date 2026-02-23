@@ -27,7 +27,7 @@ class RoomService {
     return rooms;
   }
 
-  async findRoomById(roomId: string): Promise<boolean> {
+  async roomExistById(roomId: string): Promise<boolean> {
     const isAvailable = await roomModel.exists({ _id: roomId });
     if (isAvailable) {
       return true;

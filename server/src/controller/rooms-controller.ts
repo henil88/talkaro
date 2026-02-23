@@ -29,7 +29,7 @@ class RoomController {
   }
 
   async verifyRoom(req: Request, res: Response) {
-    const { roomId } = req.body;
+    const { roomId } = req.params;
     if (!roomId) {
       return res.status(400).json({
         success: false,
@@ -38,9 +38,9 @@ class RoomController {
     }
 
     try {
-      const isValidRoom = roomService.findRoomById(roomId);
+      const isRoomExist = await roomService.roomExistById(roomId);
 
-      if (!isValidRoom) {
+      if (!isRoomExist) {
         return res.status(404).json({
           success: false,
           message: "room id invalid",
@@ -48,7 +48,7 @@ class RoomController {
       }
 
       return res.status(200).json({
-        succsess: true,
+        success: true,
         message: "room exist",
       });
     } catch (err) {
