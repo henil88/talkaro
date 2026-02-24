@@ -38,7 +38,7 @@ class RoomController {
     }
 
     try {
-      const isRoomExist = await roomService.roomExistById(roomId);
+      const isRoomExist = await roomService.getRoom(roomId);
 
       if (!isRoomExist) {
         return res.status(404).json({
@@ -49,6 +49,7 @@ class RoomController {
 
       return res.status(200).json({
         success: true,
+        room: isRoomExist,
         message: "room exist",
       });
     } catch (err) {
