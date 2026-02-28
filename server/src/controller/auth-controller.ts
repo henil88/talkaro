@@ -6,17 +6,20 @@ import tokenService from "../services/token-service";
 import UserDto from "../dtos/userDto";
 import { UserDocument } from "../models/user-model";
 import { JwtUserPayload } from "../types/auth-token";
+import MailOtpSend from "../services/nodeMailer-service";
 
 class AuthController {
   //send-otp-function
   async sendOtp(req: Request, res: Response) {
-    const { phone } = req.body;
+    const { phone, email } = req.body;
 
-    if (!phone) {
+    if (!phone && !email) {
       return res.status(400).json({
-        message: "Phone number required",
+        message: "Phone number or email required",
       });
     }
+
+    const identifier = phone || email;
 
     // gamrate otp
     const otp = await otpService.genrateOtp();
@@ -26,44 +29,52 @@ class AuthController {
     const hash = hashService.hashOtp(otp.toString());
 
     //save otp to db in hash form
-    const isOtpExist = await otpService.otpExist(phone);
+    const isOtpExist = await otpService.otpExist(identifier);
+
     if (isOtpExist === null) {
-      await otpService.storeOtpToDb(hash, phone);
+      await otpService.storeOtpToDb(hash, identifier);
     } else {
       await otpService.deleteOtp(isOtpExist._id);
-      await otpService.storeOtpToDb(hash, phone);
+      await otpService.storeOtpToDb(hash, identifier);
     }
-    //send otp
 
+    //send otp
     try {
+      if (email) {
+        await MailOtpSend.sendOtpToMail(email, otp);
+        return res.status(200).json({
+          email: email,
+        });
+      }
+
       await otpService.sendBySms(phone, otp);
-      res.status(200).json({
+      return res.status(200).json({
         phone: phone,
       });
     } catch (error) {
-      res.status(500).json({
+      return res.status(500).json({
         message: `we got some error${error}`,
       });
     }
   }
 
   async verifyOtp(req: Request, res: Response) {
-    const { otp, phone } = req.body;
+    const { otp, phone, email } = req.body;
 
-    if (!otp || !phone) {
-      res.status(400).json({
+    if (!otp || (!phone && !email)) {
+      return res.status(400).json({
         message: "all filed are required",
       });
     }
 
-    // crete otp Hash
+    const identifier = phone || email;
 
+    // crete otp Hash
     const otpHash = hashService.hashOtp(otp);
 
     //verify otp in db
-
     try {
-      await otpService.verifyOtp(otpHash, phone);
+      await otpService.verifyOtp(otpHash, identifier);
     } catch (err: any) {
       return res.status(400).json({
         message: err.message,
@@ -73,9 +84,11 @@ class AuthController {
     let user: UserDocument | null = null;
 
     try {
-      user = await userService.findUser({ phone });
+      const query = phone ? { phone } : { email };
+
+      user = await userService.findUser(query);
       if (!user) {
-        user = await userService.createUser({ phone });
+        user = await userService.createUser(query);
       }
     } catch (err) {
       console.log(err);
@@ -115,7 +128,7 @@ class AuthController {
     let userData: JwtUserPayload | null;
     try {
       userData = tokenService.verifyRefreshToken(refreshTokenFromCookie);
-      if (!userData || typeof userData === null) {
+      if (!userData) {
         return res.status(404).json({
           message: "userdata is missing",
         });
@@ -126,7 +139,7 @@ class AuthController {
       );
 
       if (!token) {
-        res.status(401).json({
+        return res.status(401).json({
           message: "invalid token",
         });
       }
@@ -146,10 +159,11 @@ class AuthController {
       try {
         await tokenService.updateRefreshToken(refreshToken, userData._id);
       } catch (err) {
-        res.status(401).json({
+        return res.status(401).json({
           Message: "failed to update token in db ",
         });
       }
+
       res.cookie("refreshToken", refreshToken, {
         maxAge: 1000 * 60 * 60 * 24 * 30,
         httpOnly: true,

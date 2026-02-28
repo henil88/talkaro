@@ -26,7 +26,6 @@ class Otpservice {
     //   body: `Thank You for join Talkaro Your OTP is ${otp}`,
     // });
   }
-
   async otpExist(phone: string) {
     return await otpModel.exists({ identifier: phone });
   }

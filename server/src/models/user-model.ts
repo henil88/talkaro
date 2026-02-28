@@ -3,6 +3,7 @@ import mongoose, { HydratedDocument } from "mongoose";
 interface IUSER {
   phone: string;
   name: string;
+  email: string;
   avatar: string;
   otp: string;
   activated: boolean;
@@ -15,7 +16,9 @@ const userSchema = new mongoose.Schema<UserDocument>(
   {
     phone: {
       type: String,
-      required: true,
+    },
+    email: {
+      type: String,
     },
     name: {
       type: String,

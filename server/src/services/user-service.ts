@@ -1,11 +1,13 @@
 import UserModel, { UserDocument } from "../models/user-model";
 
 interface CreateUserDto {
-  phone: string;
+  phone?: string;
+  email?: string;
 }
 interface FindUserDto {
   phone?: string;
   _id?: string;
+  email?: string;
 }
 class userService {
   async createUser(data: CreateUserDto) {
