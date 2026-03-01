@@ -8,16 +8,10 @@ export class WebRTCStateManager extends ExternalStore<WebRTCSnapshot> {
   private peers = new Map<string, RTCPeerConnection>();
   private pendingIce = new Map<string, RTCIceCandidateInit[]>();
 
-  // Reactive state (source of truth)
-  private state = {
-    remoteStreams: new Map<string, MediaStream>(),
-    peerSettings: new Map<string, PeerSettingsType>(),
-  };
-
   constructor() {
     super({
-      remoteStreams: new Map(),
-      peerSettings: new Map(),
+      remoteStreams: {},
+      peerSettings: {},
     });
   }
 
@@ -33,8 +27,8 @@ export class WebRTCStateManager extends ExternalStore<WebRTCSnapshot> {
     this.pendingIce.delete(id);
 
     this.updateState((draft) => {
-      draft.remoteStreams.delete(id);
-      draft.peerSettings.delete(id);
+      delete draft.remoteStreams[id];
+      delete draft.peerSettings[id];
     });
   }
 
@@ -46,13 +40,13 @@ export class WebRTCStateManager extends ExternalStore<WebRTCSnapshot> {
 
   attachRemoteStream(id: string, stream: MediaStream) {
     this.updateState((draft) => {
-      draft.remoteStreams.set(id, stream);
+      draft.remoteStreams[id] = stream;
     });
   }
 
   detachRemoteStream(id: string) {
     this.updateState((draft) => {
-      draft.remoteStreams.delete(id);
+      delete draft.remoteStreams[id];
     });
   }
 
@@ -67,13 +61,18 @@ export class WebRTCStateManager extends ExternalStore<WebRTCSnapshot> {
 
   async flushIce(id: string) {
     const pc = this.peers.get(id);
-    if (!pc) return;
+    if (!pc || pc.signalingState === "closed") return;
+    if (!pc.remoteDescription) return;
 
     const queue = this.pendingIce.get(id);
     if (!queue) return;
 
     for (const c of queue) {
-      await pc.addIceCandidate(c);
+      try {
+        await pc.addIceCandidate(c);
+      } catch (err) {
+        console.error("ICE add Failed", err);
+      }
     }
 
     this.pendingIce.delete(id);
@@ -83,23 +82,15 @@ export class WebRTCStateManager extends ExternalStore<WebRTCSnapshot> {
 
   setPeerSettings(id: string, settings: PeerSettingsType) {
     this.updateState((draft) => {
-      draft.peerSettings.set(id, settings);
+      draft.peerSettings[id] = settings;
     });
   }
 
   /* ---------------- Internal State Update ---------------- */
 
-  private updateState(
-    recipe: (draft: WebRTCSnapshot) => void
-  ) {
-    const next = produce(this.state, recipe);
-    this.state = next;
-
-    // Emit new snapshot with fresh Map references
-    this.setSnapshot({
-      remoteStreams: new Map(next.remoteStreams),
-      peerSettings: new Map(next.peerSettings),
-    });
+  private updateState(recipe: (draft: WebRTCSnapshot) => void) {
+    const next = produce(this.getSnapshot(), recipe);
+    this.setSnapshot(next);
   }
 }
 

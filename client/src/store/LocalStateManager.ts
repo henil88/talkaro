@@ -1,32 +1,25 @@
+import type { Room } from "@/types/room";
 import type { UserSettingsType } from "@/types/settingsType";
 import type { LocalSnapshot } from "@/types/storeSnapshot";
 import { produce } from "immer";
 import {
-    io,
-    Socket,
-    type ManagerOptions,
-    type SocketOptions,
+  io,
+  Socket,
+  type ManagerOptions,
+  type SocketOptions,
 } from "socket.io-client";
 import { ExternalStore } from "./externalStore";
 
 export class LocalStateManager extends ExternalStore<LocalSnapshot> {
   private socketRef: Socket | null = null;
 
-  private state: LocalSnapshot = {
-    localStream: null,
-    userSettings: {
-      muted: true,
-      username: "",
-    },
-  };
-
   constructor() {
     super({
       localStream: null,
       userSettings: {
         muted: true,
-        username: "",
       },
+      room: null,
     });
   }
 
@@ -54,7 +47,15 @@ export class LocalStateManager extends ExternalStore<LocalSnapshot> {
     return stream;
   }
 
-  /* ---------------- User Settings ---------------- */
+  /* ---------------- Room ---------------- */
+
+  setRoom(room: Room) {
+    this.updateState((draft) => {
+      draft.room = room;
+    });
+  }
+
+  /* ---------------- Update ---------------- */
 
   updateUserSettings(recipe: (draft: UserSettingsType) => void) {
     this.updateState((draft) => {
@@ -63,16 +64,17 @@ export class LocalStateManager extends ExternalStore<LocalSnapshot> {
   }
 
   private updateState(recipe: (draft: LocalSnapshot) => void) {
-    const next = produce(this.state, recipe);
-    this.state = next;
+    const next = produce(this.getSnapshot(), recipe);
     this.setSnapshot(next);
   }
 
   /* ---------------- Cleanup ---------------- */
 
   dispose() {
-    if (this.state.localStream) {
-      this.state.localStream.getTracks().forEach((t) => t.stop());
+    if (this.getSnapshot().localStream) {
+      this.getSnapshot()
+        .localStream?.getTracks()
+        .forEach((t) => t.stop());
     }
 
     if (this.socketRef) {
@@ -80,15 +82,15 @@ export class LocalStateManager extends ExternalStore<LocalSnapshot> {
       this.socketRef = null;
     }
 
-    this.state = {
+    const next = {
       localStream: null,
       userSettings: {
         muted: true,
-        username: "",
       },
+      room: null,
     };
-    
-    this.setSnapshot(this.state);
+
+    this.setSnapshot(next);
   }
 }
 

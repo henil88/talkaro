@@ -1,0 +1,1 @@
+export type Room = { id: string; topic: string; type: string };

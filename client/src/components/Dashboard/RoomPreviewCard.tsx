@@ -33,6 +33,7 @@ const MemberAvatar: FC<MemberAvatarProps> = ({ member, positionClass }) => {
         src={member.avatar}
         alt={member.name}
         draggable={false}
+        fetchPriority="low"
         onContextMenu={(e) => e.preventDefault()}
         className="h-full w-full rounded-full object-cover"
       />

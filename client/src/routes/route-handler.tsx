@@ -1,8 +1,10 @@
 import HydrateFallbackDashboard from "@/components/Dashboard/HydrateFallback";
 import CenteredCardSkeleton from "@/components/skeletons/CenteredCardSkeleton";
 import Layout from "@/layouts/Layout";
+import { RoomLayout } from "@/layouts/RoomLayout";
 import { protectedLoader } from "@/loaders/protectedLoader";
 import { signupProtectedLoader } from "@/loaders/semiProtectedLoader";
+import { verifyRoomLoader } from "@/loaders/verifyRoomLoader";
 import Home from "@/pages/Home";
 import { lazy } from "react";
 import { createBrowserRouter } from "react-router";
@@ -45,8 +47,14 @@ const router = createBrowserRouter([
       {
         path: "/room/:roomId",
         // also we need to check if the room even exist or not
-        loader: protectedLoader(),
-        Component: Room,
+        loader: protectedLoader(verifyRoomLoader),
+        Component: RoomLayout,
+        children: [
+          {
+            index: true,
+            Component: Room,
+          },
+        ],
       },
     ],
   },

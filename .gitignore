@@ -13,6 +13,7 @@ coverage/
 
 # IDE and OS files
 .idea/
+.zed/
 .vscode/
 .DS_Store
 Thumbs.db

@@ -1,21 +1,35 @@
 import api from "@/libs/axios";
+import type { Room } from "@/types/room";
 
-type ReturnValue = { room: { id: string } | null; active?: boolean };
+type ReturnValue =
+  | {
+      room: Room;
+      status: "active";
+    }
+  | {
+      status: "inactive";
+    };
 
-export const verifyRoom = async (
-  roomId: string | undefined,
-): Promise<ReturnValue> => {
-  if (!roomId) return { room: null };
+type ResponseType =
+  | {
+      success: true;
+      room: Room;
+    }
+  | {
+      success: false;
+    };
 
+export const verifyRoom = async (roomId: string): Promise<ReturnValue> => {
   try {
-    const { success }: { success: boolean } = await api.get(
+    const { data: result } = await api.get<ResponseType>(
       `/api/verify/${roomId}`,
     );
 
-    if (!success) return { active: false, room: null };
+    if (!result.success) return { status: "inactive" };
 
-    return { room: { id: roomId }, active: true };
-  } catch {
-    return { active: false, room: null };
+    return { room: result.room, status: "active" };
+  } catch (error) {
+    console.error("Error verifying room:", error);
+    return { status: "inactive" };
   }
 };

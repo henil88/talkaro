@@ -1,7 +1,7 @@
-import { redirect, type LoaderFunctionArgs } from "react-router-dom";
-import { checkAuthorization } from "@/utils/authUtils";
 import api from "@/libs/axios";
 import { store } from "@/store";
+import { checkAuthorization } from "@/utils/authUtils";
+import { redirect, type LoaderFunctionArgs } from "react-router-dom";
 
 export const protectedLoader = (
   innerLoader?: (args: LoaderFunctionArgs) => Promise<unknown>,

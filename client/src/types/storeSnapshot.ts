@@ -1,11 +1,13 @@
+import type { Room } from "./room";
 import type { PeerSettingsType, UserSettingsType } from "./settingsType";
 
 export type WebRTCSnapshot = {
-  remoteStreams: Map<string, MediaStream>;
-  peerSettings: Map<string, PeerSettingsType>;
+  remoteStreams: Record<string, MediaStream>;
+  peerSettings: Record<string, PeerSettingsType>;
 };
 
 export type LocalSnapshot = {
   localStream: MediaStream | null;
   userSettings: UserSettingsType;
+  room: Room | null;
 };

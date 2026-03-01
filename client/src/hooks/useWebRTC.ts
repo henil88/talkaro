@@ -1,10 +1,8 @@
-import { webrtcManager } from "@/store/WebRTCStateManager";
+import { useRoomSession } from "@/contexts/RoomSessionContext";
 import type { WebRTCSnapshot } from "@/types/storeSnapshot";
-import { useSyncExternalStore } from "react";
-
-const subscribe = webrtcManager.subscribe;
-const getSnapshot = webrtcManager.getSnapshot;
+import { useExternalStoreSelector } from "./useExternalStoreSelector";
 
 export function useWebRTC<T>(selector: (state: WebRTCSnapshot) => T) {
-  return useSyncExternalStore(subscribe, () => selector(getSnapshot()));
+  const { webrtc } = useRoomSession();
+  return useExternalStoreSelector(webrtc, selector);
 }

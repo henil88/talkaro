@@ -1,16 +1,16 @@
 import { SocketSignalingService } from "@/infrastructure/signaling/SocketSignalingService";
 import { WebRTCOrchestrator } from "@/infrastructure/webrtc/WebRTCOrchestrator";
-import { localStateManager } from "@/store/LocalStateManager";
 import { RoomRuntime } from "./RoomRuntime";
+import type { LocalStateManager } from "@/store/LocalStateManager";
 
 let runtime: RoomRuntime | null = null;
 
-export function initRoom(roomId: string) {
+export function initRoom(roomId: string, store: { localState: LocalStateManager }) {
   if (runtime) return runtime;
 
   runtime = new RoomRuntime(
     roomId,
-    new SocketSignalingService(localStateManager),
+    new SocketSignalingService(store.localState),
     new WebRTCOrchestrator(),
   );
 

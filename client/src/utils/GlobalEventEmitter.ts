@@ -1,6 +1,6 @@
 type Listener<T> = (state: T) => void;
 
-export class EventEmitter<T> {
+export class GlobalEventEmitter<T> {
   private listeners = new Set<Listener<T>>();
 
   subscribe(listener: Listener<T>) {

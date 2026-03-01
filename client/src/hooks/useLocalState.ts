@@ -1,10 +1,8 @@
-import { localStateManager } from "@/store/LocalStateManager";
+import { useRoomSession } from "@/contexts/RoomSessionContext";
 import type { LocalSnapshot } from "@/types/storeSnapshot";
-import { useSyncExternalStore } from "react";
-
-const subscribe = localStateManager.subscribe;
-const getSnapshot = localStateManager.getSnapshot;
+import { useExternalStoreSelector } from "./useExternalStoreSelector";
 
 export function useLocalState<T>(selector: (state: LocalSnapshot) => T) {
-  return useSyncExternalStore(subscribe, () => selector(getSnapshot()));
+  const { localState } = useRoomSession();
+  return useExternalStoreSelector(localState, selector);
 }
