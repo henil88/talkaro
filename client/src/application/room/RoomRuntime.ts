@@ -1,7 +1,10 @@
 import type SignalingTransport from "@/infrastructure/signaling/SignalingTransport";
 import type { WebRTCOrchestrator } from "@/infrastructure/webrtc/WebRTCOrchestrator";
-import { localStateManager } from "@/store/LocalStateManager";
-import { webrtcManager } from "@/store/WebRTCStateManager";
+import {
+  LocalStateManager,
+} from "@/store/LocalStateManager";
+import { WebRTCStateManager } from "@/store/WebRTCStateManager";
+import type { SettingsType } from "@/types/settingsType";
 
 export class RoomRuntime {
   private disposed = false;
@@ -9,21 +12,32 @@ export class RoomRuntime {
   private readonly roomId: string;
   private readonly signaling: SignalingTransport;
   private readonly rtc: WebRTCOrchestrator;
+  private readonly store: {
+    localState: LocalStateManager;
+    rtc: WebRTCStateManager;
+  };
 
-  constructor(
-    roomId: string,
-    signaling: SignalingTransport,
-    rtc: WebRTCOrchestrator,
-  ) {
+  constructor({
+    roomId,
+    signaling,
+    rtc,
+    store,
+  }: {
+    roomId: string;
+    signaling: SignalingTransport;
+    rtc: WebRTCOrchestrator;
+    store: { localState: LocalStateManager; rtc: WebRTCStateManager };
+  }) {
     this.roomId = roomId;
     this.signaling = signaling;
     this.rtc = rtc;
+    this.store = store;
   }
 
   async start() {
     this.signaling.connect();
 
-    const stream = await localStateManager.requestMedia({
+    const stream = await this.store.localState.requestMedia({
       audio: true,
       video: false,
     });
@@ -47,6 +61,12 @@ export class RoomRuntime {
     this.rtc.onAnswer((peerId, sdp) => {
       this.signaling.sendAnswer(peerId, sdp);
     });
+
+    // New Event: Emit peer settings when WebRTC connection is established
+    this.rtc.onConnected((peerId) => {
+      const peerSettings = this.getPeerSettings(); // Get peer settings from local state or user settings
+      this.signaling.sendPeerSettings(peerId, peerSettings); // Send settings to peer
+    });
   }
 
   private wireEvents() {
@@ -66,9 +86,24 @@ export class RoomRuntime {
       this.rtc.handleIce(from, ice);
     });
 
-    this.signaling.onPeerLeft((id) => {
-      webrtcManager.removePeer(id);
+    // Receive and apply peer settings from other peers
+    this.signaling.onPeerSettings((peerId, settings) => {
+      this.applyPeerSettings(peerId, settings);
     });
+
+    this.signaling.onPeerLeft((id) => {
+      this.store.rtc.removePeer(id);
+    });
+  }
+
+  // Add method to retrieve peer settings
+  private getPeerSettings() {
+    return this.store.localState.getSnapshot().userSettings;
+  }
+
+  // Method to apply received peer settings (e.g., mute/unmute, update avatar)
+  private applyPeerSettings(peerId: string, settings: SettingsType) {
+    this.store.rtc.setPeerSettings(peerId, settings);
   }
 
   dispose() {

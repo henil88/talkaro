@@ -8,6 +8,7 @@ export default class WebRTCOutboundEvents {
     peerId: string,
     sdp: RTCSessionDescriptionInit,
   ) => void;
+  protected connectedHandler?: (peerId: string) => void;
 
   onIce(cb: typeof this.iceHandler) {
     this.iceHandler = cb;
@@ -19,5 +20,9 @@ export default class WebRTCOutboundEvents {
 
   onAnswer(cb: typeof this.answerHandler) {
     this.answerHandler = cb;
+  }
+
+  onConnected(cb: typeof this.connectedHandler) {
+    this.connectedHandler = cb;
   }
 }

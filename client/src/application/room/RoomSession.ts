@@ -8,8 +8,4 @@ export class RoomSession {
     this.localState = new LocalStateManager();
     this.webrtc = new WebRTCStateManager();
   }
-
-  dispose() {
-    this.localState.dispose();
-  }
 }

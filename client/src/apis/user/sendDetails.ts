@@ -9,7 +9,7 @@ interface ProfileDetails {
 
 function formatFormData({ username, avatar }: ProfileDetails): FormData {
   const formData = new FormData();
-  formData.append("username", username);
+  formData.append("name", username);
   if (avatar) formData.append("avatar", avatar);
   return formData;
 }
@@ -18,7 +18,7 @@ type ResponseType = {
   success: boolean;
   message: string;
   user: unknown;
-  isActivated: boolean;
+  auth: boolean;
 };
 
 export const sendDetails = async (details: ProfileDetails) => {
@@ -28,6 +28,12 @@ export const sendDetails = async (details: ProfileDetails) => {
     { headers: { "Content-Type": "multipart/form-data" } },
   );
 
-  if (data.success) store.dispatch(setUser(data));
+  if (data.success)
+    store.dispatch(
+      setUser({
+        user: data.user,
+        isActivated: data.auth,
+      }),
+    );
   return data;
 };

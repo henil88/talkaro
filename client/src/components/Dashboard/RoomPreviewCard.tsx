@@ -1,5 +1,6 @@
-import { memo, type FC } from "react";
+import { memo, useCallback, type FC } from "react";
 import { cn } from "@/libs/utils";
+import { useNavigate } from "react-router";
 
 interface Member {
   name: string;
@@ -7,6 +8,7 @@ interface Member {
 }
 
 interface RoomPreviewCardProps extends React.ComponentPropsWithoutRef<"div"> {
+  link: string;
   title: string;
   members: readonly Member[];
   count?: number;
@@ -15,12 +17,12 @@ interface RoomPreviewCardProps extends React.ComponentPropsWithoutRef<"div"> {
 const MAX_VISIBLE_MEMBERS = 2;
 
 interface MemberAvatarProps {
-  member: Member;
+  member?: Member;
   positionClass: string;
 }
 
 const MemberAvatar: FC<MemberAvatarProps> = ({ member, positionClass }) => {
-  if (!member.avatar) return null;
+  if (!member || !member.avatar) return null;
 
   return (
     <div
@@ -33,7 +35,7 @@ const MemberAvatar: FC<MemberAvatarProps> = ({ member, positionClass }) => {
         src={member.avatar}
         alt={member.name}
         draggable={false}
-        fetchPriority="low"
+        loading="lazy"
         onContextMenu={(e) => e.preventDefault()}
         className="h-full w-full rounded-full object-cover"
       />
@@ -55,6 +57,7 @@ const MemberName: FC<MemberNameProps> = ({ member }) => {
 };
 
 const RoomPreviewCard: FC<RoomPreviewCardProps> = ({
+  link,
   title,
   members,
   count,
@@ -64,13 +67,19 @@ const RoomPreviewCard: FC<RoomPreviewCardProps> = ({
   const visibleMembers = members.slice(0, MAX_VISIBLE_MEMBERS);
   const displayedCount = count ?? members.length;
 
+  const navigate = useNavigate();
+  const handleRedirect = useCallback(() => {
+    navigate(link);
+  }, [link, navigate]);
+
   return (
     <div
       {...divProps}
       className={cn(
-        "flex h-46 min-w-73 select-none flex-col justify-between rounded-2xl bg-neutral-900 p-5",
+        "flex h-46 min-w-73 max-w-full sm:max-w-80 cursor-pointer select-none flex-col justify-between rounded-2xl bg-neutral-900 p-5",
         className,
       )}
+      onClick={handleRedirect}
     >
       <div className="mb-2.5 text-base font-semibold text-white">{title}</div>
 

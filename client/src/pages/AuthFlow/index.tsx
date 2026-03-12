@@ -22,3 +22,5 @@ const AuthFlow = () => {
 };
 
 export default AuthFlow;
+
+export const Component = AuthFlow;

@@ -13,7 +13,6 @@ export const sendOTP = async ({ email, phone }: Identifier) => {
     email,
     phone,
   });
-  if (data.success) console.log("SUCCESS_SENDING_CREDENTIALS", data);
 
   store.dispatch(setCredentials({ email, phone }));
   return data;

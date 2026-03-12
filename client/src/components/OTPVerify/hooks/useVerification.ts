@@ -24,22 +24,28 @@ export const useVerification = ({ back }: VerificationProps) => {
       return back();
     }
 
-    toast.promise(verifyOTP({ identifier, otp }), {
-      loading: "Verifying OTP…",
-      success: async (data) => {
-        if (!data.isAuthorized) throw "Invalid OTP. Try again.";
+    toast.promise(
+      verifyOTP({
+        identifier: credentials,
+        otp,
+      }),
+      {
+        loading: "Verifying OTP…",
+        success: async (data) => {
+          if (!data.isAuthorized) throw "Invalid OTP. Try again.";
 
-        const { isActivated } = await getUserDetails(api);
-        if (!isActivated) {
-          navigate("/signup");
-          return "Account isn’t activated. Please complete the activation process.";
-        }
+          const { isActivated } = await getUserDetails(api);
+          if (!isActivated) {
+            navigate("/signup");
+            return "Account isn’t activated. Please complete the activation process.";
+          }
 
-        navigate("/app");
-        return "OTP verified. You’re good to go.";
+          navigate("/app");
+          return "OTP verified. You’re good to go.";
+        },
+        error: "Verification failed: Invalid OTP. Try again.",
       },
-      error: "Verification failed: Invalid OTP. Try again.",
-    });
+    );
   };
 
   return {

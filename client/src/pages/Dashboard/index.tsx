@@ -1,10 +1,9 @@
-import image01 from "@/assets/image01.jpg";
-import image02 from "@/assets/image02.jpg";
-import { type FC, memo, useCallback, useMemo, useState } from "react";
+import { type FC, memo, useCallback, useEffect, useState } from "react";
 import RoomPreviewCard from "@/components/Dashboard/RoomPreviewCard";
 import DashboardHeader from "@/components/Dashboard/DashboardHeader";
 import useOverlay from "@/hooks/useOverlay";
 import OverlayPanel from "@/components/Dashboard/OverlayPanel";
+import { fetchRooms } from "@/apis/room/fetchRooms";
 
 /* =======================
  * Types
@@ -17,6 +16,7 @@ interface Member {
 
 interface Room {
   title: string;
+  link: string;
   members: Member[];
   count?: number;
 }
@@ -26,28 +26,6 @@ interface RoomListProps {
 }
 
 /* =======================
- * Utilities
- * ======================= */
-
-const createDummyRooms = (count: number): Room[] =>
-  Array.from({ length: count }, (_, index) => ({
-    title: 'Who is known as the "father of the computer"?',
-    members: [
-      { name: "Maren Chan", avatar: image01 },
-      { name: "Wyatt Callahan", avatar: image02 },
-    ],
-    count: Math.floor(Math.random() * (index + 1) + 2),
-  }));
-
-/* =======================
- * Hooks
- * ======================= */
-
-const useRooms = (count: number): readonly Room[] => {
-  return useMemo(() => createDummyRooms(count), [count]);
-};
-
-/* =======================
  * Components
  * ======================= */
 
@@ -55,6 +33,11 @@ const RoomList: FC<RoomListProps> = memo(({ rooms }) => {
   return (
     <div className="h-full w-full hide-scrollbar">
       <div className="flex w-full flex-wrap gap-10">
+        {rooms.length === 0 && (
+          <p className="w-full text-center">
+            No active rooms yet. Be the first to start a conversation!
+          </p>
+        )}
         {rooms.map((room, idx) => (
           <RoomPreviewCard key={idx} className="flex-1" {...room} />
         ))}
@@ -70,12 +53,31 @@ const RoomList: FC<RoomListProps> = memo(({ rooms }) => {
 function Dashboard() {
   const [searchValue, setSearchValue] = useState<string>("");
   const { panel, open, close } = useOverlay();
-  const rooms = useRooms(100);
 
   const handleStartRoom = useCallback(() => open("room"), [open]);
 
   const handleSearchChange = useCallback((value: string): void => {
     setSearchValue(value);
+  }, []);
+
+  const [rooms, setRooms] = useState<Room[]>([]);
+
+  useEffect(() => {
+    const loadRooms = async () => {
+      const fetchedRooms = await fetchRooms();
+      const roomsData = fetchedRooms.map((room) => ({
+        title: room.topic,
+        link: `/room/${room._id}`,
+        members: room.speakers.map((speaker) => ({
+          name: speaker.name,
+          avatar: speaker.avatar,
+        })),
+        count: room.speakers.length,
+      }));
+      setRooms(roomsData);
+    };
+
+    loadRooms();
   }, []);
 
   return (
@@ -92,3 +94,5 @@ function Dashboard() {
 }
 
 export default Dashboard;
+
+export const Component = Dashboard;

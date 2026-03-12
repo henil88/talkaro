@@ -1,5 +1,4 @@
-import image01 from "@/assets/image01.jpg";
-import image02 from "@/assets/image02.jpg";
+import AudioPlayer from "@/components/tools/AudioPlayer";
 import {
   Select,
   SelectContent,
@@ -7,37 +6,12 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
+import { useLocalState } from "@/hooks/useLocalState";
+import { useWebRTC } from "@/hooks/useWebRTC";
 
 import { ArrowLeft, MicOff } from "lucide-react";
+import { useEffect, useMemo } from "react";
 import { Link } from "react-router";
-
-const DummyDataGenerator = (length: number) => {
-  type Member = { name: string; avatar: string; id: string };
-  const members: Member[] = [];
-
-  for (let i = 0; i < length; i++) {
-    if (i % 2 == 0)
-      members.push({
-        name: "Maren Chan",
-        avatar: image01,
-        id: String(i).padStart(2, "0"),
-      });
-    else
-      members.push({
-        name: "Wyatt Callahan",
-        avatar: image02,
-        id: String(i).padStart(2, "0"),
-      });
-  }
-
-  return {
-    title: 'Who is known as the "father of the computer"?',
-    members,
-    count: members.length,
-  };
-};
-
-const dummyData = DummyDataGenerator(10);
 
 const Header = () => {
   return (
@@ -55,7 +29,9 @@ const Header = () => {
   );
 };
 
-const TopHeader = ({ topic }: { topic: string }) => {
+const TopHeader = () => {
+  const topic = useLocalState((state) => state.room?.topic);
+
   return (
     <div className="w-full flex justify-between py-6 px-5">
       <div className="topic">
@@ -65,23 +41,34 @@ const TopHeader = ({ topic }: { topic: string }) => {
   );
 };
 
-const UserHandler = ({ name, avatar }: { name: string; avatar: string }) => {
+const UserHandler = ({
+  name,
+  avatar,
+  id,
+}: {
+  name: string;
+  avatar: string;
+  id?: string;
+}) => {
   return (
-    <div className="w-full h-auto mb-9 flex flex-col justify-between items-center gap-2">
-      <div className="image rounded-full w-22.5 h-22.5">
-        <img
-          className="w-full h-full rounded-full object-cover bg-cover"
-          src={avatar}
-          alt={name}
-        />
+    <>
+      <div className="w-full h-auto mb-9 flex flex-col justify-between items-center gap-2">
+        <div className="image rounded-full w-22.5 h-22.5">
+          <img
+            className="w-full h-full rounded-full object-cover bg-cover"
+            src={avatar}
+            alt={name}
+          />
+        </div>
+        <span className="text-center w-22.5">
+          {name
+            .toLowerCase()
+            .replace(/^./, (c) => c.toUpperCase())
+            .replace(/^(.{8}).+$/, "$1...")}
+        </span>
       </div>
-      <span className="text-center w-22.5">
-        {name
-          .toLowerCase()
-          .replace(/^./, (c) => c.toUpperCase())
-          .replace(/^(.{8}).+$/, "$1...")}
-      </span>
-    </div>
+      {id && <AudioPlayer id={id} />}
+    </>
   );
 };
 
@@ -119,21 +106,40 @@ const Controls = () => {
   );
 };
 
+const PeerList = () => {
+  const ps = useWebRTC((state) => state.peerSettings);
+  const us = useLocalState((state) => state.userSettings);
+  const members = useMemo(
+    () =>
+      Object.keys(ps).map((key) => {
+        return { id: key, avatar: ps[key].avatar, name: ps[key].username };
+      }),
+    [ps],
+  );
+
+  useEffect(() => console.log(ps, us), [ps, us]);
+
+  return (
+    <>
+      {/* Current User */}
+      <UserHandler name={us.username} avatar={us.avatar} />
+      {/* Other Users */}
+      {members.map((member) => (
+        <UserHandler {...member} key={member.id} />
+      ))}
+    </>
+  );
+};
+
 const Room = () => {
   return (
     <section className="flex h-full w-full flex-col">
       <Header />
       <main className="w-full min-h-0 h-full flex-1 bg-zinc-900 rounded-t-lg flex flex-col relative">
-        <TopHeader topic={dummyData.title} />
+        <TopHeader />
         <div className="parent w-full h-full hide-scrollbar px-4 py-8">
           <div className="w-full h-auto grid gap-x-5 grid-cols-[repeat(auto-fit,minmax(5.625rem,1fr))] mb-36">
-            {dummyData.members.map((member) => (
-              <UserHandler
-                name={member.name}
-                avatar={member.avatar}
-                key={member.id}
-              />
-            ))}
+            <PeerList />
           </div>
         </div>
         <Controls />
@@ -143,3 +149,5 @@ const Room = () => {
 };
 
 export default Room;
+
+export const Component = Room;

@@ -1,4 +1,4 @@
-import type { PeerSettingsType } from "@/types/settingsType";
+import type { SettingsType } from "@/types/settingsType";
 import type { WebRTCSnapshot } from "@/types/storeSnapshot";
 import { produce } from "immer";
 import { ExternalStore } from "./externalStore";
@@ -80,7 +80,7 @@ export class WebRTCStateManager extends ExternalStore<WebRTCSnapshot> {
 
   /* ---------------- Peer Settings ---------------- */
 
-  setPeerSettings(id: string, settings: PeerSettingsType) {
+  setPeerSettings(id: string, settings: SettingsType) {
     this.updateState((draft) => {
       draft.peerSettings[id] = settings;
     });
@@ -93,5 +93,3 @@ export class WebRTCStateManager extends ExternalStore<WebRTCSnapshot> {
     this.setSnapshot(next);
   }
 }
-
-export const webrtcManager = new WebRTCStateManager();

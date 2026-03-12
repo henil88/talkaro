@@ -3,6 +3,7 @@ import { logout } from "../auth/slice";
 
 interface User {
   name: string;
+  _id?: string;
   avatar: string;
 }
 

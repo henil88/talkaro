@@ -2,19 +2,25 @@ import { SocketSignalingService } from "@/infrastructure/signaling/SocketSignali
 import { WebRTCOrchestrator } from "@/infrastructure/webrtc/WebRTCOrchestrator";
 import { RoomRuntime } from "./RoomRuntime";
 import type { LocalStateManager } from "@/store/LocalStateManager";
+import type { WebRTCStateManager } from "@/store/WebRTCStateManager";
 
 let runtime: RoomRuntime | null = null;
 
-export function initRoom(roomId: string, store: { localState: LocalStateManager }) {
+export function initRoom(
+  roomId: string,
+  store: { localState: LocalStateManager; rtc: WebRTCStateManager },
+) {
   if (runtime) return runtime;
 
-  runtime = new RoomRuntime(
+  runtime = new RoomRuntime({
     roomId,
-    new SocketSignalingService(store.localState),
-    new WebRTCOrchestrator(),
-  );
+    signaling: new SocketSignalingService(store.localState),
+    rtc: new WebRTCOrchestrator(store.rtc),
+    store
+  });
 
   runtime.start();
+
   return runtime;
 }
 

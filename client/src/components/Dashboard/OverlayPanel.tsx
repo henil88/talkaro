@@ -2,27 +2,40 @@ import {
   type KeyboardEvent,
   useCallback,
   useEffect,
+  useMemo,
   useRef,
   useState,
 } from "react";
 import UsersIcon from "@/assets/Users.png";
+import { createRoom } from "@/apis/room/createRoom";
+import { toast } from "sonner";
+import { useNavigate } from "react-router";
 
 type OverlayPanelProps = {
   onClose: () => void;
 };
 
 const OverlayPanel = ({ onClose }: OverlayPanelProps) => {
-  const containerRef = useRef<HTMLDivElement>(null);
+  const inputRef = useRef<HTMLInputElement>(null);
+  const type = useMemo(() => "public", []);
   const [topic, setTopic] = useState("");
+  const navigate = useNavigate();
 
   const handleClose = useCallback(() => {
     onClose();
   }, [onClose]);
 
-  const handleSubmit = useCallback(() => {
+  const handleSubmit = useCallback(async () => {
     if (!topic.trim()) return;
-    onClose();
-  }, [topic, onClose]);
+    toast.promise(createRoom(topic, type), {
+      loading: "Creating your room...",
+      success: (room) => {
+        navigate(`/room/${room._id}`);
+        return "Room created successfully!";
+      },
+      error: "Failed to create the room. Please try again.",
+    });
+  }, [topic, type, navigate]);
 
   const handleKeyDown = useCallback(
     (e: KeyboardEvent<HTMLDivElement>) => {
@@ -30,12 +43,16 @@ const OverlayPanel = ({ onClose }: OverlayPanelProps) => {
         e.stopPropagation();
         onClose();
       }
+      if (e.key === "Enter" && !!topic.trim()) {
+        e.stopPropagation();
+        handleSubmit();
+      }
     },
-    [onClose],
+    [handleSubmit, onClose, topic],
   );
 
   useEffect(() => {
-    containerRef.current?.focus();
+    inputRef.current?.focus();
   }, []);
 
   return (
@@ -46,7 +63,6 @@ const OverlayPanel = ({ onClose }: OverlayPanelProps) => {
         onClick={handleClose}
       />
       <div
-        ref={containerRef}
         role="dialog"
         aria-modal="true"
         aria-labelledby="overlay-title"
@@ -69,6 +85,7 @@ const OverlayPanel = ({ onClose }: OverlayPanelProps) => {
               Create a room
             </h2>
             <input
+              ref={inputRef}
               type="text"
               value={topic}
               onChange={(e) => setTopic(e.target.value)}

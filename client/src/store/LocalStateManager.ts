@@ -1,34 +1,37 @@
 import type { Room } from "@/types/room";
-import type { UserSettingsType } from "@/types/settingsType";
+import type { SettingsType } from "@/types/settingsType";
 import type { LocalSnapshot } from "@/types/storeSnapshot";
 import { produce } from "immer";
 import {
-  io,
-  Socket,
+  type Socket,
   type ManagerOptions,
   type SocketOptions,
 } from "socket.io-client";
 import { ExternalStore } from "./externalStore";
+import { store } from "./";
 
 export class LocalStateManager extends ExternalStore<LocalSnapshot> {
   private socketRef: Socket | null = null;
 
   constructor() {
-    super({
-      localStream: null,
-      userSettings: {
-        muted: true,
-      },
-      room: null,
-    });
+    super(getDefaultSettings());
   }
 
   /* ---------------- Socket ---------------- */
 
-  connect(url: string, opts?: Partial<ManagerOptions & SocketOptions>) {
+  async connect(
+    url: string,
+    opts?: Partial<ManagerOptions & SocketOptions>,
+  ): Promise<Socket> {
     if (this.socketRef) return this.socketRef;
-    this.socketRef = io(url, opts);
-    return this.socketRef;
+    return new Promise((resolve, reject) => {
+      import("socket.io-client").then(({ io }) => {
+        const s = io(url, opts);
+        s.on("connect", () => resolve(s));
+        s.on("connect_error", (e) => reject(e));
+        this.socketRef = s;
+      });
+    });
   }
 
   get socket() {
@@ -57,7 +60,7 @@ export class LocalStateManager extends ExternalStore<LocalSnapshot> {
 
   /* ---------------- Update ---------------- */
 
-  updateUserSettings(recipe: (draft: UserSettingsType) => void) {
+  updateUserSettings(recipe: (draft: SettingsType) => void) {
     this.updateState((draft) => {
       recipe(draft.userSettings);
     });
@@ -82,16 +85,22 @@ export class LocalStateManager extends ExternalStore<LocalSnapshot> {
       this.socketRef = null;
     }
 
-    const next = {
-      localStream: null,
-      userSettings: {
-        muted: true,
-      },
-      room: null,
-    };
+    const next = getDefaultSettings();
 
     this.setSnapshot(next);
   }
 }
 
-export const localStateManager = new LocalStateManager();
+function getDefaultSettings(): LocalSnapshot {
+  const user = store.getState().user.user;
+  if (!user) throw new Error("User doesn't exist");
+  return {
+    localStream: null,
+    userSettings: {
+      avatar: user.avatar,
+      username: user.name,
+      muted: true,
+    },
+    room: null,
+  };
+}

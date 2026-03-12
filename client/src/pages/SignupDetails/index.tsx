@@ -15,3 +15,5 @@ const SignupDetails = () => {
 };
 
 export default SignupDetails;
+
+export const Component = SignupDetails;

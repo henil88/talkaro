@@ -1,9 +1,16 @@
-import { webrtcManager } from "@/store/WebRTCStateManager";
+import { WebRTCStateManager } from "@/store/WebRTCStateManager";
 import freeice from "freeice";
 import WebRTCOutboundEvents from "./WebRTCOutboundEvents";
+import type { SettingsType } from "@/types/settingsType";
 
 export class WebRTCOrchestrator extends WebRTCOutboundEvents {
   private localStream: MediaStream | null = null;
+  private webrtcManager: WebRTCStateManager;
+
+  constructor(rtc: WebRTCStateManager) {
+    super();
+    this.webrtcManager = rtc;
+  }
 
   setLocalStream(stream: MediaStream) {
     this.localStream = stream;
@@ -17,19 +24,25 @@ export class WebRTCOrchestrator extends WebRTCOutboundEvents {
 
     const pc = new RTCPeerConnection(pcConfig);
 
-    webrtcManager.addPeer(peerId, pc);
+    this.webrtcManager.addPeer(peerId, pc);
 
     this.localStream
       ?.getTracks()
       .forEach((t) => pc.addTrack(t, this.localStream!));
 
     pc.ontrack = (e) => {
-      webrtcManager.attachRemoteStream(peerId, e.streams[0]);
+      this.webrtcManager.attachRemoteStream(peerId, e.streams[0]);
     };
 
     pc.onicecandidate = (e) => {
       if (e.candidate) {
         this.sendIceCandidate(peerId, e.candidate);
+      }
+    };
+
+    pc.onconnectionstatechange = () => {
+      if (pc.connectionState === "connected") {
+        this.connectedHandler?.(peerId);
       }
     };
 
@@ -59,30 +72,34 @@ export class WebRTCOrchestrator extends WebRTCOutboundEvents {
   async handleOffer(from: string, sdp: RTCSessionDescriptionInit) {
     const pc = this.ensurePeer(from);
     await pc.setRemoteDescription(sdp);
-    await webrtcManager.flushIce(from);
+    await this.webrtcManager.flushIce(from);
 
     this.sendAnswer(from, pc);
   }
 
   async handleAnswer(from: string, sdp: RTCSessionDescriptionInit) {
-    const pc = webrtcManager.getPeer(from);
+    const pc = this.webrtcManager.getPeer(from);
     if (!pc) return;
 
     await pc.setRemoteDescription(sdp);
-    await webrtcManager.flushIce(from);
+    await this.webrtcManager.flushIce(from);
   }
 
   async handleIce(from: string, ice: RTCIceCandidateInit) {
-    const pc = webrtcManager.getPeer(from);
+    const pc = this.webrtcManager.getPeer(from);
     if (!pc || !pc.remoteDescription) {
-      webrtcManager.queueIce(from, ice);
+      this.webrtcManager.queueIce(from, ice);
       return;
     }
     await pc.addIceCandidate(ice);
   }
 
+  handlePeerSettings(from: string, settings: SettingsType) {
+    this.webrtcManager.setPeerSettings(from, settings);
+  }
+
   ensurePeer(id: string) {
-    let pc = webrtcManager.getPeer(id);
+    let pc = this.webrtcManager.getPeer(id);
     if (!pc) pc = this.createPeer(id);
     return pc;
   }

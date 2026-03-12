@@ -128,3 +128,5 @@ const Profile = () => {
 };
 
 export default Profile;
+
+export const Component = Profile;

@@ -11,7 +11,7 @@ const UsernameInput = ({ value, onChange }: Props) => {
         id="username"
         type="text"
         minLength={3}
-        maxLength={12}
+        maxLength={50}
         placeholder="johndoe"
         value={value}
         onChange={(e) => onChange(e.target.value)}

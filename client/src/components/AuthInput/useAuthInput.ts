@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { sendOTP } from "@/apis/sendOTP";
+import { sendOTP } from "@/apis/auth/sendOTP";
 import { toast } from "sonner";
 
 export type Option = "phone" | "email";
