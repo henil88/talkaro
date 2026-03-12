@@ -22,10 +22,10 @@ class RoomController {
   }
 
   async index(req: Request, res: Response) {
-    const rooms = await roomService.getAllRooms(["social"]);
-    const allRooms = rooms.map((room) => new RoomDto(room));
+    const rooms = await roomService.getAllRooms(["public"]);
+    // const allRooms = rooms.map((room) => new RoomDto(room));
 
-    return res.json(allRooms);
+    return res.json({ success: true, rooms, message: "All rooms are sent" });
   }
 
   async verifyRoom(req: Request, res: Response) {
@@ -38,7 +38,7 @@ class RoomController {
     }
 
     try {
-      const isRoomExist = await roomService.getRoom(roomId);
+      const isRoomExist = await roomService.getRoom(roomId as string);
 
       if (!isRoomExist) {
         return res.status(404).json({
@@ -53,7 +53,7 @@ class RoomController {
         message: "room exist",
       });
     } catch (err) {
-      console.log("room err", err);
+      console.error("room err", err);
       return res.status(500).json({
         success: false,
         message: "Internal server error",

@@ -5,13 +5,16 @@ export const socketMiddleware = (
   socket: Socket,
   next: (err?: Error) => void,
 ): void => {
+  const authToken = socket.handshake.auth.token;
   const authHeader = socket.handshake.headers.authorization;
   const accessToken = (authHeader && authHeader.split(" ")[1]) || false;
-  if (!accessToken) {
+
+  const token = authToken || accessToken;
+  if (!token) {
     return next(new Error("Token is Required"));
   }
 
-  const userData = tokenService.verifyAccessToken(accessToken);
+  const userData = tokenService.verifyAccessToken(token);
 
   if (!userData) {
     return next(new Error("Invalid Token"));

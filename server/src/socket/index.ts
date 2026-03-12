@@ -12,8 +12,6 @@ export const socketInit = (httpServer: HttpServer) => {
   });
   io.use(socketMiddleware);
   io.on("connection", (socket) => {
-    console.log(socket.request.user);
-    console.log(socket.id);
     events(socket, io);
   });
 };

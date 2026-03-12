@@ -1,6 +1,6 @@
 import mongoose, { HydratedDocument } from "mongoose";
 
-interface IUSER {
+export interface IUSER {
   phone: string;
   name: string;
   email: string;

@@ -1,5 +1,5 @@
 import { Types } from "mongoose";
-import { IRoomInput } from "../models/rooms-model";
+import { IRoom } from "../models/rooms-model";
 
 class RoomDto {
   _id: string;
@@ -9,7 +9,7 @@ class RoomDto {
   speakers: string[];
   createdAt: Date;
 
-  constructor(room:IRoomInput) {
+  constructor(room:IRoom) {
     ((this._id = room._id.toString()),
       (this.topic = room.topic),
       (this.roomType = room.roomType),

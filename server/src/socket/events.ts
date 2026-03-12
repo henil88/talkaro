@@ -3,6 +3,13 @@ import { socketEvent } from "./socketEvent";
 import { rooms, socketToRoom, socketToUser } from "./socketstate";
 import { AnswerSignal, IceSignal, OfferSignal } from "../types/socket-signal";
 
+// Peer settings interface
+interface PeerSettings {
+  muted: boolean;
+  avatar: string;
+  username: string;
+}
+
 export const events = (socket: Socket, io: Server) => {
   socket.on(socketEvent.JOIN, (roomId: string) => {
     if (!roomId) {
@@ -51,6 +58,20 @@ export const events = (socket: Socket, io: Server) => {
       io.to(id).emit(socketEvent.LEFT, socket.id);
     });
   });
+
+  // Handle peer settings event after WebRTC connection is established
+  socket.on(
+    socketEvent.PEER_SETTINGS,
+    ({ settings, to }: { settings: PeerSettings; to: string }) => {
+      const roomId = socketToRoom.get(socket.id);
+      if (roomId && to !== socket.id) {
+        io.to(to).emit(socketEvent.PEER_SETTINGS, {
+          from: socket.id,
+          settings,
+        });
+      }
+    },
+  );
 };
 
 function removePeer(socketId: string) {

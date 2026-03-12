@@ -3,16 +3,19 @@
   "version": "1.0.0",
   "scripts": {
     "dev": "nodemon",
-    "build": "tsc",
-    "start": "node dist/server.js"
+    "build": "esbuild src/server.ts --bundle --platform=node --minify --outfile=dist/index.js",
+    "es:watch": "esbuild src/server.ts --bundle --platform=node --watch --outfile=dist/index.js",
+    "start": "node dist/index.js"
   },
   "keywords": [],
   "author": "",
   "license": "MIT",
   "description": "",
   "dependencies": {
+    "@imagekit/nodejs": "^7.3.0",
     "cookie": "^1.1.1",
     "cookie-parser": "^1.4.7",
+    "cors": "^2.8.6",
     "dotenv": "^17.2.3",
     "express": "^5.1.0",
     "jimp": "^1.6.0",
@@ -25,11 +28,13 @@
   },
   "devDependencies": {
     "@types/cookie-parser": "^1.4.10",
+    "@types/cors": "^2.8.19",
     "@types/express": "^5.0.3",
     "@types/jsonwebtoken": "^9.0.10",
     "@types/multer": "^2.0.0",
     "@types/node": "^24.9.1",
     "@types/nodemailer": "^7.0.11",
+    "esbuild": "^0.27.4",
     "nodemon": "^3.1.10",
     "ts-node": "^10.9.2",
     "typescript": "^5.9.3"

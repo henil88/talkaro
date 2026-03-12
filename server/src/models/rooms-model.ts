@@ -1,6 +1,6 @@
 import mongoose, { Schema, Types } from "mongoose";
 
-export interface IRoomInput {
+export interface IRoom {
   _id: Types.ObjectId | string;
   topic: string;
   roomType: string;
@@ -9,7 +9,7 @@ export interface IRoomInput {
   createdAt: Date;
 }
 
-const roomSchema = new mongoose.Schema<IRoomInput>(
+const roomSchema = new mongoose.Schema<IRoom>(
   {
     topic: {
       type: String,

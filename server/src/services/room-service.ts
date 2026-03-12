@@ -21,10 +21,11 @@ class RoomService {
   async getAllRooms(types: string[]) {
     const rooms = await roomModel
       .find({ roomType: { $in: types } })
-      .populate("ownerId")
-      .populate("speakers")
+      .populate("ownerId", "name avatar")
+      .populate("speakers", "name avatar")
       .exec();
-    return rooms;
+    
+    return rooms.map(room => room.toObject());
   }
 
   async getRoom(roomId: string) {
